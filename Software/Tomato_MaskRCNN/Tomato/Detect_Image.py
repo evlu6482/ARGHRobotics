@@ -144,7 +144,7 @@ model = modellib.MaskRCNN(mode="inference",
 # Either set a specific path or find last trained weights
 # model_path = os.path.join(ROOT_DIR, ".h5 file name here")
 #model_path = model.find_last()
-model_path = r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\Tomato_detection\logs\tomato20211117T2309\mask_rcnn_tomato_0005.h5"
+model_path = r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\logs\tomato20211117T2309\mask_rcnn_tomato_0005.h5"
 
 # Load trained weights
 print("Loading weights from ", model_path)
@@ -155,10 +155,10 @@ from keras.preprocessing.image import load_img
 from PIL import Image
 # load photograph
 
-ImgFolder=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\Tomato_detection\Tomato"
+ImgFolder=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\Detection_Image"
 
 os.chdir(ImgFolder)
-img = load_img('image_000.jpg')
+img = load_img('image_001.jpg')
 img = img_to_array(img)
 
 #set class names 
@@ -171,7 +171,7 @@ r = results[0]
 #                             class_names, r['scores'], ax=get_ax())
 
 #Exporting mask into csv data TODO improve so that all masks are exported
-mask_export_location=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\Tomato_detection\Mask_Exports"
+mask_export_location=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 os.chdir(mask_export_location)
      
 
