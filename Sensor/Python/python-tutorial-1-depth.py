@@ -7,6 +7,7 @@
 
 # First import the library
 import pyrealsense2 as rs
+import pandas as pd
 
 try:
     # Create a context object. This object owns the handles to all connected realsense devices
@@ -31,10 +32,11 @@ try:
         for y in range(480):
             for x in range(640):
                 dist = depth.get_distance(x, y)
+                dataset = pd.append(dist)
                 if 0 < dist and dist < 1:
                     coverage[x//10] += 1
             
-            if y%20 is 19:
+            if y%20 == 19:
                 line = ""
                 for c in coverage:
                     line += " .:nhBXWW"[c//25]
