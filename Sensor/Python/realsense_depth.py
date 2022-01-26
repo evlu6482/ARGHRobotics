@@ -45,6 +45,7 @@ class DepthCamera:
     
         result = rs.rs2_deproject_pixel_to_point(_intrinsics, [x, y], depth)  #result[0]: right, result[1]: down, result[2]: forward
         return result[2], -result[0], -result[1]
+        
 
     def release(self):
         self.pipeline.stop()
