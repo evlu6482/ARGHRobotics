@@ -1,0 +1,3 @@
+[submodule "Sensor/ROS/realsense-ros"]
+	path = Sensor/ROS/realsense-ros
+	url = https://github.com/IntelRealSense/realsense-ros.git

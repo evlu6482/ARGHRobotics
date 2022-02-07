@@ -8,7 +8,7 @@
 import pyrealsense2 as rs
 import numpy as np
 import cv2
-
+import time
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
@@ -50,6 +50,18 @@ try:
 
         # Convert images to numpy arrays
         depth_image = np.asanyarray(depth_frame.get_data())
+        print(depth_image)
+        
+
+        a_file = open("test.txt", "w")
+
+        for row in depth_image:
+        
+            np.savetxt(a_file, row)
+
+
+        a_file.close()
+
         color_image = np.asanyarray(color_frame.get_data())
 
         # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
@@ -69,6 +81,7 @@ try:
         cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
         cv2.imshow('RealSense', images)
         cv2.waitKey(1)
+        time.sleep(60)
 
 finally:
 

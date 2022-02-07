@@ -1,6 +1,6 @@
 import cv2
 import pyrealsense2 as rs
-from realsense_depth import *
+from definitions import *
 import csv
 
 
