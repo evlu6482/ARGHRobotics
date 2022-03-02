@@ -1,0 +1,21 @@
+
+Start here:
+
+https://medium.com/@yasuhirachiba/converting-2d-image-coordinates-to-3d-coordinates-using-ros-intel-realsense-d435-kinect-88621e8e733a
+
+                https://github.com/IntelRealSense/librealsense/wiki/Projection-in-RealSense-SDK-2.0?fbclid=IwAR3gogVZe824YUps88Dzp02AN_XzEm1BDb0UbmzfoYvn1qDFb7KzbIz9twU#intrinsic-camera-parameters
+
+                http://docs.ros.org/melodic/api/sensor_msgs/html/msg/CameraInfo.html
+
+
+other resourses:
+
+
+https://github.com/IntelRealSense/librealsense/issues/8221
+
+
+https://github.com/IntelRealSense/realsense-ros/issues/1342
+
+
+
+
