@@ -24,8 +24,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.lines as lines
 from matplotlib.patches import Polygon
-
-
+from keras.preprocessing.image import load_img
+from PIL import Image
 
 def img_to_array(img, data_format='channels_last', dtype='float32'):
     """Converts a PIL Image instance to a Numpy array.
@@ -44,7 +44,7 @@ def img_to_array(img, data_format='channels_last', dtype='float32'):
     # Numpy array x has format (height, width, channel)
     # or (channel, height, width)
     # but original PIL image has format (width, height, channel)
-    x = np.asarray(img, dtype=dtype)
+    x = np.asanyarray(img, dtype=dtype)
     if len(x.shape) == 3:
         if data_format == 'channels_first':
             x = x.transpose(2, 0, 1)
@@ -56,9 +56,6 @@ def img_to_array(img, data_format='channels_last', dtype='float32'):
     else:
         raise ValueError('Unsupported image shape: %s' % (x.shape,))
     return x
-
-
-
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
@@ -105,6 +102,8 @@ class TomatoConfig(Config):
     # Skip detections with < 99% confidence
     DETECTION_MIN_CONFIDENCE = 0.99
 
+    IMAGE_RESIZE_MODE = "square"
+
     
 config = TomatoConfig()
 config.display()
@@ -140,41 +139,40 @@ model = modellib.MaskRCNN(mode="inference",
                           config=inference_config,
                           model_dir=MODEL_DIR)
 
-# Get path to saved weights
-# Either set a specific path or find last trained weights
-# model_path = os.path.join(ROOT_DIR, ".h5 file name here")
-#model_path = model.find_last()
-model_path = r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\logs\tomato20211117T2309\mask_rcnn_tomato_0005.h5"
+# set paths to important directories
+model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Real_dataset"
+mask_export_location=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+
 
 # Load trained weights
 print("Loading weights from ", model_path)
 model.load_weights(model_path, by_name=True)
 
 #set image for detection
-from keras.preprocessing.image import load_img
-from PIL import Image
-# load photograph
 
-ImgFolder=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\Detection_Image"
-
+# load photograph for detection
 os.chdir(ImgFolder)
 img = load_img('image_001.jpg')
 img = img_to_array(img)
 
-#set class names 
-class_names=['BG','tomato']
-results = model.detect([img], verbose=0)
 
+#run detection
+results = model.detect([img], verbose=0)
+#pull masks from detection results
 r = results[0]
 
-# visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], 
-#                             class_names, r['scores'], ax=get_ax())
 
-#Exporting mask into csv data TODO improve so that all masks are exported
-mask_export_location=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
-os.chdir(mask_export_location)
-     
+#set class names 
+#class_names=['BG','tomato']
+#visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], 
+#                            class_names, r['scores'], ax=get_ax())
 
+
+
+
+#Exporting mask into csv data 
+os.chdir(mask_export_location)    
 for f in os.listdir(mask_export_location):
     os.remove(os.path.join(mask_export_location, f))
 
