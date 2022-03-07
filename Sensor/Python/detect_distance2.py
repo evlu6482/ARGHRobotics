@@ -3,11 +3,9 @@ import pyrealsense2 as rs
 from definitions import *
 import csv
 import time
-
+from PIL import Image
 
 point = (0, 0)
-
-
 
 def show_distance(event, x, y, args, params):
     global point
@@ -43,7 +41,10 @@ while Run==True:
     time.sleep(2)
     count=count +1
     if count == 3:
-        Run = False
+        Run =  False
+        color_frame=cv2.cvtColor(color_frame,cv2.COLOR_BGR2RGB)
+        img= Image.fromarray(color_frame)
+        img.save("realsense.jpeg")
         
 
 
