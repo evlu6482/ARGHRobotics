@@ -7,7 +7,7 @@ clc
 close all
 clear all
  %read in image and mask data
-image=imread('Images\image_001.jpg');
+image=imread('Images\realsense.jpeg');
 M1=csvread('Masks\Mask_0');
 I=rgb2gray(image);%convert image to greyscale
 
@@ -36,11 +36,55 @@ for i=1:x
    end
 end
 
+% %% plotting
+% figure()
+% imshow(EdgeMask)
+% figure()
+% hold on 
+% imshow(I)
+% imshow(image)
+% hold off
+
 %% plotting
+
 figure()
+
 imshow(EdgeMask)
+
+hold on
+
+ 
+
+ax=gca
+
+hold on
+
+[y,x]=find(EdgeMask);
+
+ellipse=fit_ellipse(x,y,ax)
+
 figure()
-hold on 
+
+hold on
+
+ 
+
+ 
+
 imshow(I)
+
 imshow(image)
+
+ 
+
+ax=gca
+
+hold on
+
+[y,x]=find(EdgeMask);
+
+ellipse=fit_ellipse(x,y,ax)
+
 hold off
+
+ 
