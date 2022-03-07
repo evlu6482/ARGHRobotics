@@ -1,4 +1,5 @@
 #initialize variables and load libraries
+#MaskRCNN packages
 import os
 import sys
 import keras
@@ -24,6 +25,13 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.lines as lines
 from matplotlib.patches import Polygon
+from keras.preprocessing.image import load_img
+from PIL import Image
+
+#camera packages
+import pyrealsense2 as rs
+from definitions import *
+import time
 
 
 
@@ -44,7 +52,7 @@ def img_to_array(img, data_format='channels_last', dtype='float32'):
     # Numpy array x has format (height, width, channel)
     # or (channel, height, width)
     # but original PIL image has format (width, height, channel)
-    x = np.asarray(img, dtype=dtype)
+    x = np.asanyarray(img, dtype=dtype)
     if len(x.shape) == 3:
         if data_format == 'channels_first':
             x = x.transpose(2, 0, 1)
@@ -57,9 +65,6 @@ def img_to_array(img, data_format='channels_last', dtype='float32'):
         raise ValueError('Unsupported image shape: %s' % (x.shape,))
     return x
 
-
-
-
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
 print(os.listdir(ROOT_DIR))
@@ -70,7 +75,6 @@ from mrcnn import utils
 import mrcnn.model as modellib
 from mrcnn import visualize
 from mrcnn.model import log
-
 
 
 # Directory to save logs and trained model
@@ -104,6 +108,8 @@ class TomatoConfig(Config):
 
     # Skip detections with < 99% confidence
     DETECTION_MIN_CONFIDENCE = 0.99
+
+    IMAGE_RESIZE_MODE = "square"
 
     
 config = TomatoConfig()
@@ -140,41 +146,89 @@ model = modellib.MaskRCNN(mode="inference",
                           config=inference_config,
                           model_dir=MODEL_DIR)
 
-# Get path to saved weights
-# Either set a specific path or find last trained weights
-# model_path = os.path.join(ROOT_DIR, ".h5 file name here")
-#model_path = model.find_last()
-model_path = r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\logs\tomato20211117T2309\mask_rcnn_tomato_0005.h5"
+# set paths to important directories
+model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Tomato_test"
+mask_export_location=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+
 
 # Load trained weights
 print("Loading weights from ", model_path)
 model.load_weights(model_path, by_name=True)
 
 #set image for detection
-from keras.preprocessing.image import load_img
-from PIL import Image
-# load photograph
 
-ImgFolder=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\Detection_Image"
+# load photograph for detection
+#os.chdir(ImgFolder)
+#img = load_img('test1.jpg')
+#img = img_to_array(img)
 
-os.chdir(ImgFolder)
-img = load_img('image_001.jpg')
-img = img_to_array(img)
 
-#set class names 
-class_names=['BG','tomato']
+#camera stuff
+
+
+point = (0, 0)
+
+def show_distance(event, x, y, args, params):
+    global point
+    point = (x, y)
+
+# Initialize Camera Intel Realsense
+dc = DepthCamera()
+# pc = rs.pointclou
+
+
+# Create mouse event
+cv2.namedWindow("Color frame")
+cv2.setMouseCallback("Color frame", show_distance)
+Run=True
+count=0
+while Run==True:
+    
+    ret, depth_frame, color_frame = dc.get_frame()
+    # Show distance for a specific point
+    
+  
+    RGB_at_distance = color_frame[point[1], point[0]]
+  
+    
+    cv2.putText(color_frame, "{}".format(RGB_at_distance), (20,450), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
+    
+    cv2.imshow("Color frame", color_frame)
+    key = cv2.waitKey(1)
+    time.sleep(.5)
+    count=count +1
+    if count == 3:
+        Run = False
+        os.chdir(ImgFolder)
+        img=cv2.cvtColor(color_frame,cv2.COLOR_BGR2RGB)
+        
+        img_save= Image.fromarray(img)
+        img_save.save("realsense.jpeg")
+
+
+    if key == 27:
+    
+       break
+
+
+
+#run detection
 results = model.detect([img], verbose=0)
-
+#pull masks from detection results
 r = results[0]
 
-# visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], 
-#                             class_names, r['scores'], ax=get_ax())
 
-#Exporting mask into csv data TODO improve so that all masks are exported
-mask_export_location=r"C:\Users\Collin\OneDrive\Documents\Collin\School\Senior Year\ASEN 4018 Senior Projects\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
-os.chdir(mask_export_location)
-     
+#set class names 
+#class_names=['BG','tomato']
+#visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], 
+#                            class_names, r['scores'], ax=get_ax())
 
+
+
+
+#Exporting mask into csv data 
+os.chdir(mask_export_location)    
 for f in os.listdir(mask_export_location):
     os.remove(os.path.join(mask_export_location, f))
 
