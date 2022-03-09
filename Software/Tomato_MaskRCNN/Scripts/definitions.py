@@ -133,7 +133,7 @@ def capture_image(NumFrames:int,Save_Img:bool,ImgFolder:str):
 
     # Create mouse event
     cv2.namedWindow("Color frame")
-    cv2.setMouseCallback("Color frame", show_distance)
+    # cv2.setMouseCallback("Color frame", show_distance)
     Run=True
     count=0
 
@@ -150,7 +150,7 @@ def capture_image(NumFrames:int,Save_Img:bool,ImgFolder:str):
         
         cv2.imshow("Color frame", color_frame)
         key = cv2.waitKey(1)
-        time.sleep(.5)
+        #time.sleep(.5)
         count=count +1
         if count == NumFrames:
             Run = False
