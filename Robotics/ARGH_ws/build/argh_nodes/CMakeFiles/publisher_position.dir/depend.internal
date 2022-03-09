@@ -63,5 +63,10 @@ argh_nodes/CMakeFiles/publisher_position.dir/publisher_position.cpp.o
  /opt/ros/melodic/include/ros/wall_timer_options.h
  /opt/ros/melodic/include/rosconsole/macros_generated.h
  /opt/ros/melodic/include/std_msgs/String.h
+ /opt/ros/melodic/include/tf2/LinearMath/MinMax.h
+ /opt/ros/melodic/include/tf2/LinearMath/QuadWord.h
+ /opt/ros/melodic/include/tf2/LinearMath/Quaternion.h
+ /opt/ros/melodic/include/tf2/LinearMath/Scalar.h
+ /opt/ros/melodic/include/tf2/LinearMath/Vector3.h
  /opt/ros/melodic/include/xmlrpcpp/XmlRpcDecl.h
  /opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h
