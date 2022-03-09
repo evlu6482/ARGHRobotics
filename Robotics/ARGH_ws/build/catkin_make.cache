@@ -1,0 +1,2 @@
+argh_nodes
+-DCATKIN_DEVEL_PREFIX=/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel -DCMAKE_INSTALL_PREFIX=/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/install -G Unix Makefiles
