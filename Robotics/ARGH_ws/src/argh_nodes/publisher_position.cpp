@@ -285,10 +285,10 @@ int main(int argc, char **argv){
 		<< " X position=> " << msg1.position.x 
 		<< " Y position=> " << msg1.position.y
 		<< " Z position=> " << msg1.position.z 
-		<< "X orientation=> " << msg1.orientation.x
-		<< "Y orientation=> " << msg1.orientation.y
-		<< "Z orientation=> " << msg1.orientation.z
-		<< "W orientation=> " << msg1.orientation.w
+		<< " X orientation=> " << msg1.orientation.x
+		<< " Y orientation=> " << msg1.orientation.y
+		<< " Z orientation=> " << msg1.orientation.z
+		<< " W orientation=> " << msg1.orientation.w
 		);
 
 

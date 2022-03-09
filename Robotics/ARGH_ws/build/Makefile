@@ -311,6 +311,19 @@ geometry_msgs_generate_messages_py/fast:
 .PHONY : geometry_msgs_generate_messages_py/fast
 
 #=============================================================================
+# Target rules for targets named subscriber_position
+
+# Build rule for target.
+subscriber_position: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 subscriber_position
+.PHONY : subscriber_position
+
+# fast build rule for target.
+subscriber_position/fast:
+	$(MAKE) -f argh_nodes/CMakeFiles/subscriber_position.dir/build.make argh_nodes/CMakeFiles/subscriber_position.dir/build
+.PHONY : subscriber_position/fast
+
+#=============================================================================
 # Target rules for targets named geometry_msgs_generate_messages_lisp
 
 # Build rule for target.
@@ -594,6 +607,7 @@ help:
 	@echo "... gtest"
 	@echo "... publisher_position"
 	@echo "... geometry_msgs_generate_messages_py"
+	@echo "... subscriber_position"
 	@echo "... geometry_msgs_generate_messages_lisp"
 	@echo "... geometry_msgs_generate_messages_cpp"
 	@echo "... geometry_msgs_generate_messages_eus"

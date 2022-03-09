@@ -41,6 +41,7 @@
 /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/publisher_position.dir
 /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/geometry_msgs_generate_messages_py.dir
 /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/test.dir
+/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/subscriber_position.dir
 /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/geometry_msgs_generate_messages_lisp.dir
 /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/geometry_msgs_generate_messages_cpp.dir
 /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/list_install_components.dir

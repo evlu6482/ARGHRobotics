@@ -198,6 +198,21 @@ geometry_msgs_generate_messages_py/fast:
 .PHONY : geometry_msgs_generate_messages_py/fast
 
 # Convenience name for target.
+argh_nodes/CMakeFiles/subscriber_position.dir/rule:
+	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(MAKE) -f CMakeFiles/Makefile2 argh_nodes/CMakeFiles/subscriber_position.dir/rule
+.PHONY : argh_nodes/CMakeFiles/subscriber_position.dir/rule
+
+# Convenience name for target.
+subscriber_position: argh_nodes/CMakeFiles/subscriber_position.dir/rule
+
+.PHONY : subscriber_position
+
+# fast build rule for target.
+subscriber_position/fast:
+	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(MAKE) -f argh_nodes/CMakeFiles/subscriber_position.dir/build.make argh_nodes/CMakeFiles/subscriber_position.dir/build
+.PHONY : subscriber_position/fast
+
+# Convenience name for target.
 argh_nodes/CMakeFiles/geometry_msgs_generate_messages_lisp.dir/rule:
 	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(MAKE) -f CMakeFiles/Makefile2 argh_nodes/CMakeFiles/geometry_msgs_generate_messages_lisp.dir/rule
 .PHONY : argh_nodes/CMakeFiles/geometry_msgs_generate_messages_lisp.dir/rule
@@ -524,6 +539,33 @@ publisher_position.cpp.s:
 	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(MAKE) -f argh_nodes/CMakeFiles/publisher_position.dir/build.make argh_nodes/CMakeFiles/publisher_position.dir/publisher_position.cpp.s
 .PHONY : publisher_position.cpp.s
 
+subscriber_position.o: subscriber_position.cpp.o
+
+.PHONY : subscriber_position.o
+
+# target to build an object file
+subscriber_position.cpp.o:
+	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(MAKE) -f argh_nodes/CMakeFiles/subscriber_position.dir/build.make argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o
+.PHONY : subscriber_position.cpp.o
+
+subscriber_position.i: subscriber_position.cpp.i
+
+.PHONY : subscriber_position.i
+
+# target to preprocess a source file
+subscriber_position.cpp.i:
+	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(MAKE) -f argh_nodes/CMakeFiles/subscriber_position.dir/build.make argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.i
+.PHONY : subscriber_position.cpp.i
+
+subscriber_position.s: subscriber_position.cpp.s
+
+.PHONY : subscriber_position.s
+
+# target to generate assembly for a file
+subscriber_position.cpp.s:
+	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(MAKE) -f argh_nodes/CMakeFiles/subscriber_position.dir/build.make argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.s
+.PHONY : subscriber_position.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -536,6 +578,7 @@ help:
 	@echo "... publisher_position"
 	@echo "... geometry_msgs_generate_messages_py"
 	@echo "... test"
+	@echo "... subscriber_position"
 	@echo "... geometry_msgs_generate_messages_lisp"
 	@echo "... geometry_msgs_generate_messages_cpp"
 	@echo "... list_install_components"
@@ -562,6 +605,9 @@ help:
 	@echo "... publisher_position.o"
 	@echo "... publisher_position.i"
 	@echo "... publisher_position.s"
+	@echo "... subscriber_position.o"
+	@echo "... subscriber_position.i"
+	@echo "... subscriber_position.s"
 .PHONY : help
 
 

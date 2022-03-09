@@ -128,6 +128,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/argh_nodes_node.cpp)
 add_executable(publisher_position publisher_position.cpp)
+add_executable(subscriber_position subscriber_position.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -143,6 +144,8 @@ add_executable(publisher_position publisher_position.cpp)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(publisher_position ${catkin_LIBRARIES})
+target_link_libraries(subscriber_position ${catkin_LIBRARIES})
+
 #############
 ## Install ##
 #############
