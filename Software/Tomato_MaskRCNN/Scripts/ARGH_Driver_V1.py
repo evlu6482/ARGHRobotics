@@ -4,6 +4,7 @@ print("#################################################################")
 print("Initializing Driver Function")
 
 #MaskRCNN packages
+from ast import Num
 import os
 from pickle import FALSE, TRUE
 import sys
@@ -33,7 +34,11 @@ import matplotlib.lines as lines
 from matplotlib.patches import Polygon
 from keras.preprocessing.image import load_img
 from PIL import Image
+import warnings
 
+warnings.filterwarnings('ignore', '.*do not.*', )
+warnings.warn('DelftStack')
+warnings.warn('Do not show this message')
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 #camera packages
@@ -42,14 +47,14 @@ import time
 
 from definitions import *
 
-#set paths for project
-# model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-# ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-# mask_export_location=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+# set paths for project
+model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+mask_export_location=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 
-model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+# model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+# ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+# mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
@@ -149,11 +154,12 @@ while(Run==TRUE):
         print()
         print("Running Image Detection")
         #run image detection
-
+         
         #Capture Image from camera
         ########################################################
         try:
-            img=capture_image(30,False,ImgFolder)
+            ImgName="realsense.jpg"
+            img=capture_image(30,True,ImgName,ImgFolder)
             #run detection
             #######################################################
             results = model.detect([img], verbose=0)
@@ -161,6 +167,7 @@ while(Run==TRUE):
             r = results[0]
             #isolate the mask data from the detection results
             myMask=r['masks']
+            NumTomato=myMask.shape[2]
 
             #export the masks of tomatoes found during detection
             #######################################################
@@ -170,9 +177,22 @@ while(Run==TRUE):
             print()
 
     elif(Case=="2"):
-        print("Not Implimented Yet")
+        print("Detecting Ripeness")
+        print() 
         print()
-        print()
+        count=0
+        
+        Ripe=[False for x in range(NumTomato)]
+        
+        for i in range(0, NumTomato):
+            
+            output=ripeness(ImgName,ImgFolder,myMask[:,:,i])
+            Ripe[i]=output
+            print("Tomato ",i, " is ripe: ", Ripe[i])
+            count+=1
+            print(count)
+        
+
     elif(Case=="3"):
         print("Not Implimented Yet")
         print()
