@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/src
+CMAKE_SOURCE_DIR = /home/argh/ARGHRobotics/Robotics/ARGH_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build
+CMAKE_BINARY_DIR = /home/argh/ARGHRobotics/Robotics/ARGH_ws/build
 
 # Include any dependencies generated for this target.
 include argh_nodes/CMakeFiles/subscriber_position.dir/depend.make
@@ -58,17 +58,17 @@ include argh_nodes/CMakeFiles/subscriber_position.dir/progress.make
 include argh_nodes/CMakeFiles/subscriber_position.dir/flags.make
 
 argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o: argh_nodes/CMakeFiles/subscriber_position.dir/flags.make
-argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o: /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o"
-	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o -c /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp
+argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o: /home/argh/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/argh/ARGHRobotics/Robotics/ARGH_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o"
+	cd /home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o -c /home/argh/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp
 
 argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/subscriber_position.dir/subscriber_position.cpp.i"
-	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp > CMakeFiles/subscriber_position.dir/subscriber_position.cpp.i
+	cd /home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/argh/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp > CMakeFiles/subscriber_position.dir/subscriber_position.cpp.i
 
 argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/subscriber_position.dir/subscriber_position.cpp.s"
-	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp -o CMakeFiles/subscriber_position.dir/subscriber_position.cpp.s
+	cd /home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/argh/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/subscriber_position.cpp -o CMakeFiles/subscriber_position.dir/subscriber_position.cpp.s
 
 argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o.requires:
 
@@ -88,32 +88,32 @@ subscriber_position_OBJECTS = \
 # External object files for target subscriber_position
 subscriber_position_EXTERNAL_OBJECTS =
 
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: argh_nodes/CMakeFiles/subscriber_position.dir/build.make
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libroscpp.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librosconsole.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librosconsole_log4cxx.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librosconsole_backend_interface.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/liblog4cxx.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_regex.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libxmlrpcpp.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libroscpp_serialization.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librostime.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libcpp_common.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_system.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_thread.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libpthread.so
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4
-/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: argh_nodes/CMakeFiles/subscriber_position.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position"
-	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/subscriber_position.dir/link.txt --verbose=$(VERBOSE)
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: argh_nodes/CMakeFiles/subscriber_position.dir/subscriber_position.cpp.o
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: argh_nodes/CMakeFiles/subscriber_position.dir/build.make
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libroscpp.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librosconsole.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librosconsole_log4cxx.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librosconsole_backend_interface.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/liblog4cxx.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_regex.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libxmlrpcpp.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libroscpp_serialization.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/librostime.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /opt/ros/melodic/lib/libcpp_common.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_system.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_thread.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libpthread.so
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4
+/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position: argh_nodes/CMakeFiles/subscriber_position.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/argh/ARGHRobotics/Robotics/ARGH_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable /home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position"
+	cd /home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/subscriber_position.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-argh_nodes/CMakeFiles/subscriber_position.dir/build: /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position
+argh_nodes/CMakeFiles/subscriber_position.dir/build: /home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/subscriber_position
 
 .PHONY : argh_nodes/CMakeFiles/subscriber_position.dir/build
 
@@ -122,10 +122,10 @@ argh_nodes/CMakeFiles/subscriber_position.dir/requires: argh_nodes/CMakeFiles/su
 .PHONY : argh_nodes/CMakeFiles/subscriber_position.dir/requires
 
 argh_nodes/CMakeFiles/subscriber_position.dir/clean:
-	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && $(CMAKE_COMMAND) -P CMakeFiles/subscriber_position.dir/cmake_clean.cmake
+	cd /home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes && $(CMAKE_COMMAND) -P CMakeFiles/subscriber_position.dir/cmake_clean.cmake
 .PHONY : argh_nodes/CMakeFiles/subscriber_position.dir/clean
 
 argh_nodes/CMakeFiles/subscriber_position.dir/depend:
-	cd /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/src /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes /home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/subscriber_position.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/argh/ARGHRobotics/Robotics/ARGH_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/argh/ARGHRobotics/Robotics/ARGH_ws/src /home/argh/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes /home/argh/ARGHRobotics/Robotics/ARGH_ws/build /home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes /home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/CMakeFiles/subscriber_position.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : argh_nodes/CMakeFiles/subscriber_position.dir/depend
 
