@@ -276,3 +276,40 @@ def ripeness(Img_Name:str,ImgFolder,mask):
     # dispimg.show()
 
     return(ripeScore)
+
+def GetEdges(Mask):
+
+    [numx,numy]=np.shape(Mask)
+    # numx=int(len(Mask))
+    # numy=int(len(Mask[0]))
+
+    EdgeMask= np.zeros((numx,numy))
+
+    for x in range(0,numx-1):
+        # print(x)
+        for y in range(0,numy-1):
+            # print(y)
+            if(x==0 or y==0):
+                if (Mask[x,y] == True):
+                    EdgeMask[x,y] = 1  
+                    # print("Edge") 
+            elif(x == numx-1 or y== numy-1):
+                if (Mask[x,y] == True):
+                    EdgeMask[x,y] = True
+                    # print("Edge")
+            elif( Mask[x,y]==True and (( Mask[x-1,y] ==False ) or ( Mask[x+1,y] ==False ) )):
+                    EdgeMask[x,y]=True
+                    # print("Edge")
+            elif( Mask[x,y]==True and (( Mask[x,y-1] ==False ) or ( Mask[x,y+1] ==False ) )):
+                    EdgeMask[x,y]=True
+                    # print("Edge")
+
+
+    edgeArr=np.argwhere(EdgeMask > 0)
+
+    xpix= edgeArr[:,0]
+    ypix= edgeArr[:,1]
+
+
+
+    return(xpix,ypix)

@@ -47,14 +47,19 @@ import time
 
 from definitions import *
 
-# set paths for project
-model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-mask_export_location=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+#matlab packages 
 
-# model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-# ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-# mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+import matlab.engine
+eng = matlab.engine.start_matlab()
+
+# set paths for project
+# model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+# ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+# mask_export_location=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+
+model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
@@ -121,6 +126,15 @@ model = modellib.MaskRCNN(mode="inference",
 # Load trained weights
 model.load_weights(model_path, by_name=True)
 
+
+#setup data structure for tomato data
+TomatoDict = {
+
+
+
+}
+
+
 #setup conditional statements to run loop
 Run=TRUE
 Case=0
@@ -136,8 +150,9 @@ while(Run==TRUE):
     print("0: Shut Down")
     print("1: Take New Image and Detect")
     print("2: Determine Ripeness")
-    print("3: Move Camera To New Environment")
-    print("4: Push Movement Commands To UR10e")
+    print("3: Get Mask Edges")
+    print("4: Move Camera To New Environment")
+    print("5: Push Movement Commands To UR10e")
     print("----------------------------------")
     
     print("User Input: ",end='') 
@@ -194,10 +209,41 @@ while(Run==TRUE):
         
 
     elif(Case=="3"):
+        print("Getting Mask Edges")
+        print()
+        print()
+        
+        numx=len(myMask)
+        # print(numx)
+        numy=len(myMask[0])
+        # print(numy)
+        
+
+
+        edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
+
+        # for i in range(0,NumTomato):
+        mask_in=(myMask[:,:,0])
+        # input=matlab.double(input.tolist())
+        # Edge_output=eng.GetEdges(input)
+        xpix , ypix =GetEdges(mask_in)
+        xpix=matlab.double(xpix.tolist())
+        ypix=matlab.double(ypix.tolist())
+
+        print("Running Fit_Ellipse")
+        [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis]=eng.fit_ellipse(xpix,ypix,nargout=9)
+
+        print("Ellipse Parameters Found")
+        EllipseParams=[a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis]
+
+        #TODO Get array of ellipse points associated with parameters
+        
+
+    elif(Case=="4"):
         print("Not Implimented Yet")
         print()
-        print()
-    elif(Case=="4"):
+        print() 
+    elif(Case=="5"):
         print("Not Implimented Yet")
         print()
         print() 
