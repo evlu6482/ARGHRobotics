@@ -1,9 +1,10 @@
-function [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis] = fit_ellipse(x,y)
+function [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line] = fit_ellipse(x,y)
 %
 % fit_ellipse - finds the best fit to an ellipse for the given set of points.
 %
 % Format:   ellipse_t = fit_ellipse( edge_array,axis_handle )
 %
+
 % Input:    x,y         - a set of points in 2 column vectors. AT LEAST 5 points are needed !
 %           axis_handle - optional. a handle to an axis, at which the estimated ellipse 
 %                         will be drawn along with it's axes
@@ -245,6 +246,20 @@ else
         'short_axis',[],...
         'status',status );
 end
+ % rotation matrix to rotate the axes with respect to an angle phi
+    R = [ cos_phi sin_phi; -sin_phi cos_phi ];
+    
+    % the axes
+    ver_line        = [ [X0 X0]; Y0+b*[-1 1] ];
+    horz_line       = [ X0+a*[-1 1]; [Y0 Y0] ];
+    new_ver_line    = R*ver_line;
+    new_horz_line   = R*horz_line;
+    
+    % the ellipse
+    theta_r         = linspace(0,2*pi);
+    ellipse_x_r     = X0 + a*cos( theta_r );
+    ellipse_y_r     = Y0 + b*sin( theta_r );
+    rotated_ellipse = R * [ellipse_x_r;ellipse_y_r];
 
 [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis];
 

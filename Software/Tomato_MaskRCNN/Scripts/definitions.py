@@ -313,3 +313,12 @@ def GetEdges(Mask):
 
 
     return(xpix,ypix)
+
+
+def getCenterpoint():
+
+
+
+
+
+    return()

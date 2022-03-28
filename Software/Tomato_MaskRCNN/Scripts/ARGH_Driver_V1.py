@@ -172,24 +172,24 @@ while(Run==TRUE):
          
         #Capture Image from camera
         ########################################################
-        try:
-            ImgName="realsense.jpg"
-            img=capture_image(30,True,ImgName,ImgFolder)
-            #run detection
-            #######################################################
-            results = model.detect([img], verbose=0)
-            #pull masks from detection results
-            r = results[0]
-            #isolate the mask data from the detection results
-            myMask=r['masks']
-            NumTomato=myMask.shape[2]
+        # try:
+        ImgName="realsense.jpg"
+        img=capture_image(30,True,ImgName,ImgFolder)
+        #run detection
+        #######################################################
+        results = model.detect([img], verbose=0)
+        #pull masks from detection results
+        r = results[0]
+        #isolate the mask data from the detection results
+        myMask=r['masks']
+        NumTomato=myMask.shape[2]
 
-            #export the masks of tomatoes found during detection
-            #######################################################
-            Export_Masks(mask_export_location,myMask)
-        except:
-            print("ERROR: Not able to capture image")
-            print()
+        #export the masks of tomatoes found during detection
+        #######################################################
+        Export_Masks(mask_export_location,myMask)
+        # except:
+        #     print("ERROR: Not able to capture image")
+        #     print()
 
     elif(Case=="2"):
         print("Detecting Ripeness")
@@ -231,10 +231,46 @@ while(Run==TRUE):
         ypix=matlab.double(ypix.tolist())
 
         print("Running Fit_Ellipse")
-        [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis]=eng.fit_ellipse(xpix,ypix,nargout=9)
-
+        [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line]=eng.fit_ellipse(xpix,ypix,nargout=12)
+        rotated_ellipse=np.asarray(rotated_ellipse)
         print("Ellipse Parameters Found")
-        EllipseParams=[a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis]
+
+        vertpoints=np.asarray(new_ver_line)
+        vertpoint1=vertpoints[0,:]
+        vertpoint2=vertpoints[1,:]
+        
+
+        horizpoints=np.asarray(new_horz_line)
+        horizpoint1=horizpoints[0,:]
+        horizpoint2=horizpoints[1,:]
+
+        vertLinex=numpy.linspace(vertpoint1[0],vertpoint2[0],num=100)
+        vertLiney=numpy.linspace(vertpoint1[1],vertpoint2[1],num=100)
+
+        horizLinex=numpy.linspace(horizpoint1[0],horizpoint2[0],num=100)
+        horizLiney=numpy.linspace(vertpoint1[1],horizpoint2[1],num=100)
+
+        #find Centerpoint of tomato by finding
+        y=99
+        centerx=0
+        centery=0
+        for x in range(0,99):
+            if (vertLinex[x]>horizLinex[y]):
+                centerXindex=x
+                centerX= vertLinex[x]
+                break
+            y=y-1
+        y=99
+        for x in range(0,99):
+            if (vertLiney[x]>vertLiney[y]):
+                centerYindex=x
+                centerY= vertLinex[x]
+                break
+            y=y-1
+
+
+        centerY=round(centerY)
+        centerX=round(centerX)
 
         #TODO Get array of ellipse points associated with parameters
         
