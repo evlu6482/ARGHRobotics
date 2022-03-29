@@ -56,13 +56,15 @@ class DepthCamera:
     def __init__(self):
         # Configure depth and color streams
         self.pipeline = rs.pipeline()
+        align_to = rs.stream.color
+        self.align = rs.align(align_to)
         config = rs.config()
 
         # Get device product line for setting a supporting resolution
         pipeline_wrapper = rs.pipeline_wrapper(self.pipeline)
         pipeline_profile = config.resolve(pipeline_wrapper)
-        device = pipeline_profile.get_device()
-        device_product_line = str(device.get_info(rs.camera_info.product_line))
+        self.device = pipeline_profile.get_device()
+        device_product_line = str(self.device.get_info(rs.camera_info.product_line))
 
         config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
         config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
@@ -71,6 +73,7 @@ class DepthCamera:
         self.pipeline.start(config)
 
     def get_frame(self):
+        
         frames = self.pipeline.wait_for_frames()
         depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
@@ -81,12 +84,73 @@ class DepthCamera:
         if not depth_frame or not color_frame:
             return False, None, None
         return True, depth_image, color_image
+        
+
+
+    def capture_image(self,NumFrames:int,Save_Img:bool,Img_Name:str,ImgFolder:str):
+        #inputs:
+            #NumFrames: Int, Number of frames to  stream before capturing image
+            #Save_Img: Bool, True/False - true to save the final image to a location on the drive
+            #ImgFolder: str, directory Location to save an image to
+            
+        #outputs:
+            #img: 3 dimensional array with the rgb values of the captured image
+    # Initialize Camera Intel Realsense 
+        point = (0, 0)
+        dc = DepthCamera()  
+        
+        # Create mouse event
+        # cv2.namedWindow("Color frame")
+        # cv2.setMouseCallback("Color frame", show_distance)
+        Run=True
+        count=0
+
+        while Run==True:
+            #grab frames from intel realsense
+            ret, depth_frame, color_frame = dc.get_frame()
+            
+            
+        
+            # RGB_at_distance = color_frame[point[1], point[0]]
+        
+            
+            # cv2.putText(color_frame, "{}".format(RGB_at_distance), (20,450), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
+            
+            # cv2.imshow("Color frame", color_frame)
+            key = cv2.waitKey(1)
+            #time.sleep(.5)
+            count=count +1
+            if count == NumFrames:
+                Run = False
+                os.chdir(ImgFolder)
+                img=cv2.cvtColor(color_frame,cv2.COLOR_BGR2RGB)
+                
+                if Save_Img:
+                    img_save= Image.fromarray(img)
+                    img_save.save(Img_Name)
+        
+            
+        return img,depth_frame
 
     def release(self):
         self.pipeline.stop()
 
 
+    def resetcamera(self):
+        
+        self.device.hardware_reset()
 
+    def get_depth_intrin(self,xpoint,ypoint):
+        # Wait for a coherent pair of frames: depth and color
+        
+        frames = self.pipeline.wait_for_frames()
+        aligned_frames = self.align.process(frames)
+        depth_frame = aligned_frames.get_depth_frame()
+        depth_intrin = depth_frame.profile.as_video_stream_profile().intrinsics
+        depth = depth_frame.get_distance(xpoint,ypoint)
+        self.release()
+        self.pipeline.start(rs.config())
+        return depth_intrin,depth
 #Functions and classes added by Collin Rasbid:
 
 #function to convert image to array, used in manual jpg conversion
@@ -121,50 +185,7 @@ def img_to_array(img, data_format='channels_last', dtype='float32'):
     return x
 
 #function to capture an image from the intelrealsense camera
-def capture_image(NumFrames:int,Save_Img:bool,Img_Name:str,ImgFolder:str):
-    #inputs:
-        #NumFrames: Int, Number of frames to  stream before capturing image
-        #Save_Img: Bool, True/False - true to save the final image to a location on the drive
-        #ImgFolder: str, directory Location to save an image to
-        
-    #outputs:
-        #img: 3 dimensional array with the rgb values of the captured image
-   # Initialize Camera Intel Realsense 
-    point = (0, 0)
-    dc = DepthCamera()  
 
-    # Create mouse event
-    cv2.namedWindow("Color frame")
-    # cv2.setMouseCallback("Color frame", show_distance)
-    Run=True
-    count=0
-
-    while Run==True:
-        #grab frames from intel realsense
-        ret, depth_frame, color_frame = dc.get_frame()
-        
-        
-    
-        # RGB_at_distance = color_frame[point[1], point[0]]
-    
-        
-        # cv2.putText(color_frame, "{}".format(RGB_at_distance), (20,450), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
-        
-        cv2.imshow("Color frame", color_frame)
-        key = cv2.waitKey(1)
-        #time.sleep(.5)
-        count=count +1
-        if count == NumFrames:
-            Run = False
-            os.chdir(ImgFolder)
-            img=cv2.cvtColor(color_frame,cv2.COLOR_BGR2RGB)
-            
-            if Save_Img:
-                img_save= Image.fromarray(img)
-                img_save.save(Img_Name)
-
-    
-    return img
 
 def Export_Masks(mask_export_location:str, myMask):
     #clean directory of previously created masks
@@ -206,8 +227,8 @@ def ripeness(Img_Name:str,ImgFolder,mask):
 #      end  
 #    end
 # end
-    dispimg=Image.fromarray(singleTomato,'RGB')
-    dispimg.show()
+    # dispimg=Image.fromarray(singleTomato,'RGB')
+    # dispimg.show()
     for x in range(numx):
         for y in range(numy):
             # print(x," ",y)

@@ -12,6 +12,7 @@ from wsgiref.simple_server import software_version
 import keras
 import random
 import math
+import statistics
 import re
 import time
 import tensorflow as tf
@@ -35,7 +36,7 @@ from matplotlib.patches import Polygon
 from keras.preprocessing.image import load_img
 from PIL import Image
 import warnings
-
+from matplotlib import pyplot as plt
 warnings.filterwarnings('ignore', '.*do not.*', )
 warnings.warn('DelftStack')
 warnings.warn('Do not show this message')
@@ -51,7 +52,7 @@ from definitions import *
 
 import matlab.engine
 eng = matlab.engine.start_matlab()
-
+real=DepthCamera()
 # set paths for project
 # model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
 # ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
@@ -138,6 +139,8 @@ TomatoDict = {
 #setup conditional statements to run loop
 Run=TRUE
 Case=0
+harvest_target=-1   
+
 while(Run==TRUE):
 #Case 0: Dont Run Detection or stop detection
 #Case 1: Take New Photos and Detect
@@ -150,16 +153,16 @@ while(Run==TRUE):
     print("0: Shut Down")
     print("1: Take New Image and Detect")
     print("2: Determine Ripeness")
-    print("3: Get Mask Edges")
-    print("4: Move Camera To New Environment")
-    print("5: Push Movement Commands To UR10e")
+    print("3: Detect Depth")
+    print("4: Visualize Tomato")
+    print("5: Not implimented")
     print("----------------------------------")
     
     print("User Input: ",end='') 
     Case=input()
 
-
-            
+    
+                
     if(Case=="0"):
         print()
         print("Shutting Down")
@@ -174,7 +177,8 @@ while(Run==TRUE):
         ########################################################
         # try:
         ImgName="realsense.jpg"
-        img=capture_image(30,True,ImgName,ImgFolder)
+        img,depth_frame =real.capture_image(30,True,ImgName,ImgFolder)
+        
         #run detection
         #######################################################
         results = model.detect([img], verbose=0)
@@ -205,84 +209,123 @@ while(Run==TRUE):
             Ripe[i]=output
             print("Tomato ",i, " is ripe: ", Ripe[i])
             count+=1
-            print(count)
         
+
+        
+        for i in range(0, NumTomato):
+            if Ripe[i]==True:
+                harvest_target=i
+                break
+        if(harvest_target==-1):
+            print("No Valid Harvest Target")
+        else:
+            print("Harvest Target Is Tomato: ", harvest_target)
 
     elif(Case=="3"):
-        print("Getting Mask Edges")
-        print()
-        print()
-        
-        numx=len(myMask)
-        # print(numx)
-        numy=len(myMask[0])
-        # print(numy)
-        
+        if harvest_target==-1:
+            print("No Valid Harvest Target")
+            
+        else:
+
+            print("Getting Mask Edges")
+            print()
+            print()
+            
+            numx=len(myMask)
+            # print(numx)
+            numy=len(myMask[0])
+            # print(numy)
+            
 
 
-        edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
+            edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
 
-        # for i in range(0,NumTomato):
-        mask_in=(myMask[:,:,0])
-        # input=matlab.double(input.tolist())
-        # Edge_output=eng.GetEdges(input)
-        xpix , ypix =GetEdges(mask_in)
-        xpix=matlab.double(xpix.tolist())
-        ypix=matlab.double(ypix.tolist())
+            # for i in range(0,NumTomato):
+            mask_in=(myMask[:,:,harvest_target])
+            # input=matlab.double(input.tolist())
+            # Edge_output=eng.GetEdges(input)
+            xpix , ypix =GetEdges(mask_in)
+            xpix=matlab.double(xpix.tolist())
+            ypix=matlab.double(ypix.tolist())
 
-        print("Running Fit_Ellipse")
-        [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line]=eng.fit_ellipse(xpix,ypix,nargout=12)
-        rotated_ellipse=np.asarray(rotated_ellipse)
-        print("Ellipse Parameters Found")
+            print("Running Fit_Ellipse")
+            [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line]=eng.fit_ellipse(xpix,ypix,nargout=12)
+            rotated_ellipse=np.asarray(rotated_ellipse)
+            print("Ellipse Parameters Found")
 
-        vertpoints=np.asarray(new_ver_line)
-        vertpoint1=vertpoints[0,:]
-        vertpoint2=vertpoints[1,:]
-        
+            # vertpoints=np.asarray(new_ver_line)
+            # vertpoint1=vertpoints[0,:]
+            # vertpoint2=vertpoints[1,:]
+            
 
-        horizpoints=np.asarray(new_horz_line)
-        horizpoint1=horizpoints[0,:]
-        horizpoint2=horizpoints[1,:]
+            # horizpoints=np.asarray(new_horz_line)
+            # horizpoint1=horizpoints[0,:]
+            # horizpoint2=horizpoints[1,:]
 
-        vertLinex=numpy.linspace(vertpoint1[0],vertpoint2[0],num=100)
-        vertLiney=numpy.linspace(vertpoint1[1],vertpoint2[1],num=100)
+            # vertLinex=numpy.linspace(vertpoint1[0],vertpoint2[0],num=100)
+            # vertLiney=numpy.linspace(vertpoint1[1],vertpoint2[1],num=100)
 
-        horizLinex=numpy.linspace(horizpoint1[0],horizpoint2[0],num=100)
-        horizLiney=numpy.linspace(vertpoint1[1],horizpoint2[1],num=100)
+            # horizLinex=numpy.linspace(horizpoint1[0],horizpoint2[0],num=100)
+            # horizLiney=numpy.linspace(vertpoint1[1],horizpoint2[1],num=100)
 
-        #find Centerpoint of tomato by finding
-        y=99
-        centerx=0
-        centery=0
-        for x in range(0,99):
-            if (vertLinex[x]>horizLinex[y]):
-                centerXindex=x
-                centerX= vertLinex[x]
-                break
-            y=y-1
-        y=99
-        for x in range(0,99):
-            if (vertLiney[x]>vertLiney[y]):
-                centerYindex=x
-                centerY= vertLinex[x]
-                break
-            y=y-1
+            # #find Centerpoint of tomato by finding
+            # y=99
+            # centerx=0
+            # centery=0
+            # for x in range(0,99):
+            #     if (vertLinex[x]>horizLinex[y]):
+            #         centerXindex=x
+            #         centerX= vertLinex[x]
+            #         break
+            #     y=y-1
+            # y=99
+            # for x in range(0,99):
+            #     if (vertLiney[x]>vertLiney[y]):
+            #         centerYindex=x
+            #         centerY= vertLinex[x]
+            #         break
+            #     y=y-1
 
+            print("Detecting Tomato Location...")
+            centerX=round(statistics.mean(rotated_ellipse[1,:]))
+            centerY=round(statistics.mean(rotated_ellipse[0,:]))
 
-        centerY=round(centerY)
-        centerX=round(centerX)
+            
+            depth_intrin, depth = real.get_depth_intrin(centerX,centerY)
+            depth_point = rs.rs2_deproject_pixel_to_point(depth_intrin, [centerX,centerY], depth)
 
-        #TODO Get array of ellipse points associated with parameters
-        
+            #TODO need to offset for center of tomato, currently at front of tomato
+            print("Location of Center Point :")
+            print("X: ",depth_point[0],"Y: ",depth_point[1],"Z: ", depth_point[2])
+            print()
 
     elif(Case=="4"):
-        print("Not Implimented Yet")
-        print()
-        print() 
+        if harvest_target==-1:
+            print("No Valid Harvest Target")
+            
+        else:
+            print("Running Image Verification")
+            print()
+            print() 
+
+            
+            implot = plt.imshow(img)
+
+            # put a blue dot at (10, 20)
+            center=plt.scatter(centerX,centerY,label='Center Point')
+            # center.set_label('Tomatoe Center Point"')
+            ellipse=plt.scatter(rotated_ellipse[1,:],rotated_ellipse[0,:],label='Fit Ellipse')
+            plt.legend(handles=[center, ellipse])
+            plt.show(block=False)
+            
+            plt.pause(5)
+            plt.close()
+        
     elif(Case=="5"):
         print("Not Implimented Yet")
         print()
         print() 
+        
     else:
         print("incorrect keyboard input")
     time.sleep(0.5)
