@@ -5,6 +5,8 @@ print("Initializing Driver Function")
 
 #MaskRCNN packages
 from ast import Num
+from importlib import find_loader
+from operator import truediv
 import os
 from pickle import FALSE, TRUE
 import sys
@@ -139,8 +141,9 @@ TomatoDict = {
 #setup conditional statements to run loop
 Run=TRUE
 Case=0
+Ripe_Tomato=False
 harvest_target=-1   
-
+Camera_Location="A"
 while(Run==TRUE):
 #Case 0: Dont Run Detection or stop detection
 #Case 1: Take New Photos and Detect
@@ -155,7 +158,7 @@ while(Run==TRUE):
     print("2: Determine Ripeness")
     print("3: Detect Depth")
     print("4: Visualize Tomato")
-    print("5: Not implimented")
+    print("5: Change Camera Locatioin")
     print("----------------------------------")
     
     print("User Input: ",end='') 
@@ -215,6 +218,7 @@ while(Run==TRUE):
         for i in range(0, NumTomato):
             if Ripe[i]==True:
                 harvest_target=i
+                Ripe_Tomato=True
                 break
         if(harvest_target==-1):
             print("No Valid Harvest Target")
@@ -295,9 +299,23 @@ while(Run==TRUE):
             depth_point = rs.rs2_deproject_pixel_to_point(depth_intrin, [centerX,centerY], depth)
 
             #TODO need to offset for center of tomato, currently at front of tomato
-            print("Location of Center Point :")
+            print("Location of Center Point In Camera Frame:")
             print("X: ",depth_point[0],"Y: ",depth_point[1],"Z: ", depth_point[2])
             print()
+
+            cx,cy=calibratecamera(depth_point[0],depth_point[1],depth_point[2])
+            cz=depth_point[2]
+
+            print("Location of Calibrated Center Point In Camera Frame:")
+            print("cX: ",cx,"cY: ",cy,"cZ: ", cz)
+            print()
+                
+            print("Performing Transformation From Position ", Camera_Location)
+            ax,ay,az=rotateaboutX(depth_point[0],depth_point[1],depth_point[2])#TODO implement code for secondary camera locations
+            print("Location of Center Point In Robot Frame:")
+            print("X: ",ax,"Y: ",ay,"Z: ",az )
+            print()
+
 
     elif(Case=="4"):
         if harvest_target==-1:
@@ -312,9 +330,9 @@ while(Run==TRUE):
             implot = plt.imshow(img)
 
             # put a blue dot at (10, 20)
-            center=plt.scatter(centerX,centerY,label='Center Point')
+            center=plt.scatter(centerX,centerY,5,label='Center Point')
             # center.set_label('Tomatoe Center Point"')
-            ellipse=plt.scatter(rotated_ellipse[1,:],rotated_ellipse[0,:],label='Fit Ellipse')
+            ellipse=plt.scatter(rotated_ellipse[1,:],rotated_ellipse[0,:],5,label='Fit Ellipse')
             plt.legend(handles=[center, ellipse])
             plt.show(block=False)
             
@@ -322,9 +340,32 @@ while(Run==TRUE):
             plt.close()
         
     elif(Case=="5"):
-        print("Not Implimented Yet")
-        print()
-        print() 
+        find_Location=True
+        while(find_Location==True):
+            print("Enter New Camera Location: A, B, or C: ")
+            print()
+            print() 
+            Camera_Location=input()
+            
+            if(Camera_Location=="A" or Camera_Location=="a"):
+                Camera_Location=Camera_Location.upper()
+                print("Camera Located At Position ", Camera_Location)
+                print()
+                find_Location=False
+            elif(Camera_Location=="B"or Camera_Location=="b"):
+                Camera_Location=Camera_Location.upper()
+                print("Camera Located At Position ", Camera_Location)
+                print()
+                find_Location=False
+            elif(Camera_Location=="C"or Camera_Location=="c"):
+                Camera_Location=Camera_Location.upper()
+                print("Camera Located At Position ", Camera_Location)
+                print()
+                find_Location=False
+            else:
+                print("Incorrect Input, enter Either A, B, or C")
+
+        
         
     else:
         print("incorrect keyboard input")

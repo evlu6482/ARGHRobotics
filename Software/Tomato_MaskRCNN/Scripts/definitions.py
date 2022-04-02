@@ -1,3 +1,4 @@
+from cmath import pi
 from turtle import end_fill
 import pyrealsense2 as rs
 import numpy as np
@@ -142,14 +143,16 @@ class DepthCamera:
 
     def get_depth_intrin(self,xpoint,ypoint):
         # Wait for a coherent pair of frames: depth and color
-        
+    
         frames = self.pipeline.wait_for_frames()
         aligned_frames = self.align.process(frames)
+       
         depth_frame = aligned_frames.get_depth_frame()
         depth_intrin = depth_frame.profile.as_video_stream_profile().intrinsics
         depth = depth_frame.get_distance(xpoint,ypoint)
         self.release()
         self.pipeline.start(rs.config())
+        
         return depth_intrin,depth
 #Functions and classes added by Collin Rasbid:
 
@@ -336,10 +339,71 @@ def GetEdges(Mask):
     return(xpix,ypix)
 
 
-def getCenterpoint():
+def Camera2Arm(cx, cy, cz, P):
 
+    # Inputs:
+        # cx = Camera output x-value [m]
+        # cy = Camera output y-value [m]
+        # cz = Camera output z-value [m]
+        # P = Camera position; enter either 'A', 'B', or 'C'
+    # Returns:
+        # ax = Arm x-value [m]
+        # ay = Arm y-value [m]
+        # az = Arm z-value [m]
+#21.262
+    t = np.radians(-21) # ------------------------ Rotation angle
+    R = np.array([[1., 0., 0.],
+                 [0., np.cos(t), np.sin(t)],
+                 [0., -np.sin(t), np.cos(t)]]) # Rotation matrix about x-axis
+    v = np.array([cx, cy, cz]) # -------------------- Input coordinate vector
+    v_rot = R.dot(v) # ------------------------------ Rotated input coordinate vector
+    ShiftY = 0.2 # ---------------------------------- Shift in arm y-direction [m]
+    ShiftZ = 0.084 # -------------------------------- Shift in arm z-direction [m]
+    #3.15 cm from center of camera
+    if P == "A":
+        ShiftX = 0.312 + 0.054 - 0.0315 # -------------------- Shift in arm x-direction a position A [m] (31.2 cm right of center)
+    elif P == "B":
+        ShiftX = 0.054 - 0.0315# ---------------------------- Shift in arm x-direction a position B [m]
+    elif P == "C":
+        ShiftX = -0.313 + 0.054 - 0.0315# ------------------- Shift in arm x-direction a position C [m]
 
+    ax = v_rot[0] + ShiftX 
+    ay = v_rot[2] + ShiftY
+    az = v_rot[1] + ShiftZ
 
+    # 
 
+    return ax, ay, az
 
-    return()
+def rotateaboutX(X,Y,Z,P):
+    import numpy as np
+    import math as m
+    theta=-21 *np.pi/180 
+    c,s= m.cos(theta), m.sin(theta)
+    a= np.array([[1,0,0],
+                 [0,c,s],
+                 [0,-s,c]])
+    V=np.array([X,Y,Z])
+    nx,ny,nz=a.dot(V)
+    if P == "A":
+        ShiftX = 0.024 + 0.031 # -------------------- Shift in arm x-direction a position A [m] (31.2 cm right of center)
+    elif P == "B":
+        ShiftX = 0.024# ---------------------------- Shift in arm x-direction a position B [m]
+    elif P == "C":
+        ShiftX = 0.024-0.031# ------------------- Shift in arm x-direction a position C [m]
+
+    nx=(nx+ShiftX) #apply x shift for point b
+    ny=(ny+0.1995)#apply y shift for point b
+    nz=(-nz+0.065)#apply z shift for point b
+    return nx, ny, nz
+
+def calibratecamera(x,y,z):
+
+    mx= 0.004/0.169
+
+    nx= -mx*z + x
+
+    my=  .0035/0.169
+
+    ny= -my*z +y
+    return nx, ny
