@@ -1,0 +1,15 @@
+<launch>
+	<node
+		pkg="argh_nodes"
+		type="control_node"
+		name="control"
+		required="true"
+		output="screen"
+	/>
+	<node
+		pkg="argh_nodes"
+		type="move_node"
+		name="move"
+		output="screen"
+	/>
+</launch>
