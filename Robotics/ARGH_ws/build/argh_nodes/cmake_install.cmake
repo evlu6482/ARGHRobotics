@@ -52,3 +52,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/argh_nodes" TYPE FILE FILES "/home/argh/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes/package.xml")
 endif()
 
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/argh_nodes" TYPE PROGRAM FILES "/home/argh/ARGHRobotics/Robotics/ARGH_ws/build/argh_nodes/catkin_generated/installspace/gripper_cntrl_node.py")
+endif()
+

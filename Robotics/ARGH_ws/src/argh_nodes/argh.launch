@@ -12,4 +12,12 @@
 		name="move"
 		output="screen"
 	/>
+	<node
+		pkg="argh_nodes"
+		type="gripper_cntrl_node.py"
+		name="gripper"
+		output="screen"
+	/>
+
+
 </launch>

@@ -41,7 +41,7 @@ references:
 int current_sensor_position { 1 };
 int first_run {true};
 static const std::string PLANNING_GROUP_ARM = "manipulator";
-static const std::string PLANNING_GROUP_GRIPPER = "robotiq_rf85_gripper";
+//static const std::string PLANNING_GROUP_GRIPPER = "robotiq_rf85_gripper";
 
 
 //using global variables to store joint positions for positions home->1->3
@@ -87,6 +87,11 @@ public:
     //publishing sensor boolean value to sensing_node_boolean_move
     pub_2 = n_.advertise<std_msgs::Bool>("sensing_node_boolean_move", 1000);
     
+    //for gripper control
+    pub_3 = n_.advertise<std_msgs::String>("control_gripper", 1000);
+    
+
+
     //subscribing to the boolean passed from the sensing node to tell whether we move or not 
     sub_1 = n_.subscribe("sensing_node_boolean_move", 1000, &MoveSensor::MoveSensor_callback, this);
   
@@ -106,12 +111,14 @@ public:
   	//initializing messages to be published
     std_msgs::Int32 sensor_position;
     std_msgs::Bool move_the_sensor_bool;
+    std_msgs::String control_gripper;
+
     bool success;	
     if(input.data == true){
     	
     	
   		moveit::planning_interface::MoveGroupInterface move_group_interface_arm(PLANNING_GROUP_ARM);
-  		moveit::planning_interface::MoveGroupInterface move_group_interface_gripper(PLANNING_GROUP_GRIPPER);
+  		//moveit::planning_interface::MoveGroupInterface move_group_interface_gripper(PLANNING_GROUP_GRIPPER);
   		moveit::planning_interface::MoveGroupInterface::Plan move_plan;
 
   		//maybe always move home first? just as a back up
@@ -142,18 +149,24 @@ public:
 
     			//sleep again just incase
     			rate.sleep();
+    			control_gripper.data = "start";
+    			rate.sleep();
+    			pub_3.publish(control_gripper);
     			//position 1 has been reached
-    			//close the gripper
+    			//close the gripper publish message open
+    			control_gripper.data = "close";
+    			rate.sleep();
+    			pub_3.publish(control_gripper);
+    			
+
+
 
     			//move to position 2
     			//get the current position and orientation of the gripper relative to the base
     			
     			current_pose = move_group_interface_arm.getCurrentPose("tool0");
-
-    			
-
     			target_pose1.orientation = current_pose.pose.orientation;
-    			target_pose1.position.x = first_pos_tcp.at(0) + 0.1;//change by however much 
+    			target_pose1.position.x = first_pos_tcp.at(0) - 0.1;//change by however much 
     			target_pose1.position.y = first_pos_tcp.at(1);//remains the same
     			target_pose1.position.z = first_pos_tcp.at(2);//remains the same 
     			//set the target pose
@@ -163,6 +176,9 @@ public:
     			rate.sleep();
     			//open gripper and move back to home 
 
+    			control_gripper.data = "open";
+    			rate.sleep();
+    			pub_3.publish(control_gripper);
 
     			move_group_interface_arm.setJointValueTarget(home_pos);
     			move_group_interface_arm.move();
@@ -210,6 +226,7 @@ private:
   ros::NodeHandle n_; 
   ros::Publisher pub_1;
   ros::Publisher pub_2;
+  ros::Publisher pub_3;
   ros::Subscriber sub_1;
 
 };//End of class MoveSensor

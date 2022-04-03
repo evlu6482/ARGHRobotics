@@ -8,7 +8,7 @@ project(argh_nodes)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
-find_package(catkin REQUIRED COMPONENTS roscpp moveit_ros_planning moveit_ros_planning_interface geometry_msgs std_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp rospy moveit_ros_planning moveit_ros_planning_interface geometry_msgs std_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -161,6 +161,7 @@ target_link_libraries(control_node ${catkin_LIBRARIES})
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+catkin_install_python(PROGRAMS gripper_cntrl_node.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
