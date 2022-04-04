@@ -116,6 +116,8 @@ public:
     std_msgs::Bool move_the_sensor_bool; //boolean to stop computations in this node
     std_msgs::String control_gripper; //string to tell the gripper what to do
     bool success; // was used for io but io was removed
+
+
     if(input.data == true){
     	
     	//insantiate plan group
@@ -125,6 +127,8 @@ public:
   		geometry_msgs::Pose target_pose1;
   		geometry_msgs::PoseStamped current_pose;
 
+			moveit_msgs::Constraints test_constraints;
+			moveit_msgs::OrientationConstraint ocm;
   		//move to the home position just incase we didnt return to home before
   		move_group_interface_arm.setJointValueTarget(home_pos);
   		move_group_interface_arm.move();
@@ -150,25 +154,26 @@ public:
     			control_gripper.data = "close";
     			rate.sleep();
     			pub_3.publish(control_gripper);
-    			
-
-
-    			current_pose = move_group_interface_arm.getCurrentPose("tool0");
-    			target_pose1.orientation = current_pose.pose.orientation;
-    			target_pose1.position.x = first_pos_tcp.at(0) - 0.1; //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
-    			target_pose1.position.y = first_pos_tcp.at(1);//remains the same
-    			target_pose1.position.z = first_pos_tcp.at(2);//remains the same 
-
-    			//set the target pose and move the arm 
-    			move_group_interface_arm.setPoseTarget(target_pose1);
-    			move_group_interface_arm.move();
     			rate.sleep();
+    			//move to position 2
+    			 
+				    ocm.link_name = "r_wrist_roll_link";
+				    ocm.header.frame_id = "base_link";
+				    ocm.orientation.w = 1.0;
+				    ocm.absolute_x_axis_tolerance = 0.0;
+				    ocm.absolute_y_axis_tolerance = 0.0;
+				    ocm.absolute_z_axis_tolerance = 0.0;
+				    ocm.weight = 2.0;
+				    test_constraints.orientation_constraints.push_back(ocm);
+				    move_group_interface_arm.setPathConstraints(test_constraints);
+
 
     			current_pose = move_group_interface_arm.getCurrentPose("tool0");
     			target_pose1.orientation = current_pose.pose.orientation;
-    			target_pose1.position.x = first_pos_tcp.at(0) - 0.3; //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
+    			target_pose1.position.x = first_pos_tcp.at(0) - 0.5; //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
     			target_pose1.position.y = first_pos_tcp.at(1);//remains the same
     			target_pose1.position.z = first_pos_tcp.at(2);//remains the same 
+
 
     			//set the target pose and move the arm 
     			move_group_interface_arm.setPoseTarget(target_pose1);
