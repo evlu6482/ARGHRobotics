@@ -7,4 +7,4 @@
 # new environment variables
 
 # modified environment variables
-export PWD='/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/build'
+export PWD='/home/argh/ARGHRobotics/Robotics/ARGH_ws/build'

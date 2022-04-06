@@ -8,7 +8,16 @@ project(argh_nodes)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
-find_package(catkin REQUIRED COMPONENTS roscpp geometry_msgs )
+find_package(catkin REQUIRED COMPONENTS 
+roscpp 
+rospy 
+moveit_ros_planning 
+moveit_ros_planning_interface 
+moveit_core
+geometry_msgs 
+std_msgs
+)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -127,8 +136,9 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/argh_nodes_node.cpp)
-add_executable(publisher_position publisher_position.cpp)
-add_executable(subscriber_position subscriber_position.cpp)
+add_executable(move_node move_node.cpp)
+add_executable(control_node control_node.cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -143,8 +153,8 @@ add_executable(subscriber_position subscriber_position.cpp)
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(publisher_position ${catkin_LIBRARIES})
-target_link_libraries(subscriber_position ${catkin_LIBRARIES})
+target_link_libraries(move_node ${catkin_LIBRARIES})
+target_link_libraries(control_node ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -159,7 +169,9 @@ target_link_libraries(subscriber_position ${catkin_LIBRARIES})
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-
+catkin_install_python(PROGRAMS gripper_cntrl_node.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+catkin_install_python(PROGRAMS harvest_node.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+catkin_install_python(PROGRAMS sense_node.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 # install(TARGETS ${PROJECT_NAME}_node

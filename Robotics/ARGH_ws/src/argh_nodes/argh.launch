@@ -1,0 +1,35 @@
+<launch>
+	<node
+		pkg="argh_nodes"
+		type="control_node"
+		name="control"
+		required="true"
+		output="screen"
+	/>
+	<node
+		pkg="argh_nodes"
+		type="move_node"
+		name="move"
+		output="screen"
+	/>
+	<node
+		pkg="argh_nodes"
+		type="gripper_cntrl_node.py"
+		name="gripper"
+		output="screen"
+	/>
+	<node
+		pkg="argh_nodes"
+		type="sense_node.py"
+		name="sense"
+		output="screen"
+	/>
+	<node
+		pkg="argh_nodes"
+		type="harvest_node.py"
+		name="harvest"
+		output="screen"
+	/>
+
+
+</launch>

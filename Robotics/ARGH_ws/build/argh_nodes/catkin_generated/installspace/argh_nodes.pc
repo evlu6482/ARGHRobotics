@@ -1,4 +1,4 @@
-prefix=/home/yllieroronnoc/ARGHRobotics/Robotics/ARGH_ws/install
+prefix=/home/argh/ARGHRobotics/Robotics/ARGH_ws/install
 
 Name: argh_nodes
 Description: Description of argh_nodes
