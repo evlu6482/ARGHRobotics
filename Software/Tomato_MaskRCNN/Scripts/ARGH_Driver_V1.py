@@ -140,15 +140,14 @@ TomatoDict = {
 
 #setup conditional statements to run loop
 Run=TRUE
-Case=0
+Case=5
 Ripe_Tomato=False
 harvest_target=-1   
 Camera_Location="A"
+
+#Main Execution Loop
 while(Run==TRUE):
-#Case 0: Dont Run Detection or stop detection
-#Case 1: Take New Photos and Detect
-#Case 2: Run Ripeness Detection
-#Case 3: ...
+
     print("----------------------------------")
     print("Welcome to ARGH Tomato Detection")
     print("----------------------------------")
@@ -194,10 +193,8 @@ while(Run==TRUE):
         #export the masks of tomatoes found during detection
         #######################################################
         Export_Masks(mask_export_location,myMask)
-        # except:
-        #     print("ERROR: Not able to capture image")
-        #     print()
 
+        # Case=2
     elif(Case=="2"):
         print("Detecting Ripeness")
         print() 
@@ -224,6 +221,8 @@ while(Run==TRUE):
             print("No Valid Harvest Target")
         else:
             print("Harvest Target Is Tomato: ", harvest_target)
+
+        # Case=3
 
     elif(Case=="3"):
         if harvest_target==-1:
@@ -257,38 +256,6 @@ while(Run==TRUE):
             rotated_ellipse=np.asarray(rotated_ellipse)
             print("Ellipse Parameters Found")
 
-            # vertpoints=np.asarray(new_ver_line)
-            # vertpoint1=vertpoints[0,:]
-            # vertpoint2=vertpoints[1,:]
-            
-
-            # horizpoints=np.asarray(new_horz_line)
-            # horizpoint1=horizpoints[0,:]
-            # horizpoint2=horizpoints[1,:]
-
-            # vertLinex=numpy.linspace(vertpoint1[0],vertpoint2[0],num=100)
-            # vertLiney=numpy.linspace(vertpoint1[1],vertpoint2[1],num=100)
-
-            # horizLinex=numpy.linspace(horizpoint1[0],horizpoint2[0],num=100)
-            # horizLiney=numpy.linspace(vertpoint1[1],horizpoint2[1],num=100)
-
-            # #find Centerpoint of tomato by finding
-            # y=99
-            # centerx=0
-            # centery=0
-            # for x in range(0,99):
-            #     if (vertLinex[x]>horizLinex[y]):
-            #         centerXindex=x
-            #         centerX= vertLinex[x]
-            #         break
-            #     y=y-1
-            # y=99
-            # for x in range(0,99):
-            #     if (vertLiney[x]>vertLiney[y]):
-            #         centerYindex=x
-            #         centerY= vertLinex[x]
-            #         break
-            #     y=y-1
 
             print("Detecting Tomato Location...")
             centerX=round(statistics.mean(rotated_ellipse[1,:]))
@@ -311,12 +278,12 @@ while(Run==TRUE):
             print()
                 
             print("Performing Transformation From Position ", Camera_Location)
-            ax,ay,az=rotateaboutX(depth_point[0],depth_point[1],depth_point[2])#TODO implement code for secondary camera locations
+            ax,ay,az=rotateaboutX(cx,cy,cz,Camera_Location)#TODO implement code for secondary camera locations
             print("Location of Center Point In Robot Frame:")
             print("X: ",ax,"Y: ",ay,"Z: ",az )
             print()
 
-
+        Case=4
     elif(Case=="4"):
         if harvest_target==-1:
             print("No Valid Harvest Target")
@@ -338,7 +305,8 @@ while(Run==TRUE):
             
             plt.pause(5)
             plt.close()
-        
+        # Case=0
+        # Run=False
     elif(Case=="5"):
         find_Location=True
         while(find_Location==True):
@@ -365,7 +333,7 @@ while(Run==TRUE):
             else:
                 print("Incorrect Input, enter Either A, B, or C")
 
-        
+        # Case=1
         
     else:
         print("incorrect keyboard input")

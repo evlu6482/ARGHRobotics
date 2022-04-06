@@ -384,17 +384,21 @@ def rotateaboutX(X,Y,Z,P):
                  [0,c,s],
                  [0,-s,c]])
     V=np.array([X,Y,Z])
-    nx,ny,nz=a.dot(V)
+    tx,ty,tz=a.dot(V)
     if P == "A":
-        ShiftX = 0.024 + 0.031 # -------------------- Shift in arm x-direction a position A [m] (31.2 cm right of center)
+        ShiftX = 0.368 - 0.032 # -------------------- Shift in arm x-direction a position A [m] (31.2 cm right of center)
     elif P == "B":
-        ShiftX = 0.024# ---------------------------- Shift in arm x-direction a position B [m]
+        ShiftX = 0.057 - 0.032# ---------------------------- Shift in arm x-direction a position B [m]
     elif P == "C":
-        ShiftX = 0.024-0.031# ------------------- Shift in arm x-direction a position C [m]
+        ShiftX = 0.2575 + 0.032# ------------------- Shift in arm x-direction a position C [m]
+   
+    nx=(tx+ShiftX) #apply x shift for point b
+    ny=(tz+0.1995)#apply y shift for point b
+    nz=(-ty+0.065)#apply z shift for point b
 
-    nx=(nx+ShiftX) #apply x shift for point b
-    ny=(ny+0.1995)#apply y shift for point b
-    nz=(-nz+0.065)#apply z shift for point b
+    # nx=tx
+    # ny=ty
+    # nz=tz
     return nx, ny, nz
 
 def calibratecamera(x,y,z):
