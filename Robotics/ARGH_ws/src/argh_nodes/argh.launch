@@ -18,6 +18,18 @@
 		name="gripper"
 		output="screen"
 	/>
+	<node
+		pkg="argh_nodes"
+		type="sense_node.py"
+		name="sense"
+		output="screen"
+	/>
+	<node
+		pkg="argh_nodes"
+		type="harvest_node.py"
+		name="harvest"
+		output="screen"
+	/>
 
 
 </launch>

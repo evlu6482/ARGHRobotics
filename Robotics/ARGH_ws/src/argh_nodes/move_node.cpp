@@ -58,8 +58,8 @@ const std::vector<double> third_pos{5.951443672180176, -1.8237282238402308, -2.3
 //will add more for other tcp used in linear move to other positions
 //%%%%%%%%%%%%%%%%%%%%%%% NEED TO UPDATE FIRST
 const std::vector<double> first_pos_tcp{0.37202, 0.25562 , 0.174};
-const std::vector<double> second_pos_tcp{0.37202, 0.25562 , 0.174};
-const std::vector<double> third_pos_tcp{0.37202, 0.25562 , 0.174};
+const std::vector<double> second_pos_tcp{0.0663, 0.25562 , 0.174};
+const std::vector<double> third_pos_tcp{-0.2547, 0.25562 , 0.174};
 
  /*
 	Name: MoveSensor
@@ -125,6 +125,8 @@ public:
 		
 		//initialize variables to be used inside of switch statement, used for cartesian move	
   		geometry_msgs::Pose target_pose1;
+  		geometry_msgs::Pose target_pose2;
+  		geometry_msgs::Pose target_pose3;
   		geometry_msgs::PoseStamped current_pose;
 
 			moveit_msgs::Constraints test_constraints;
@@ -160,17 +162,17 @@ public:
 				    ocm.link_name = "r_wrist_roll_link";
 				    ocm.header.frame_id = "base_link";
 				    ocm.orientation.w = 1.0;
-				    ocm.absolute_x_axis_tolerance = 0.0;
+				    ocm.absolute_x_axis_tolerance = 0.1;
 				    ocm.absolute_y_axis_tolerance = 0.0;
 				    ocm.absolute_z_axis_tolerance = 0.0;
-				    ocm.weight = 2.0;
+				    ocm.weight = 1.0;
 				    test_constraints.orientation_constraints.push_back(ocm);
 				    move_group_interface_arm.setPathConstraints(test_constraints);
 
 
     			current_pose = move_group_interface_arm.getCurrentPose("tool0");
     			target_pose1.orientation = current_pose.pose.orientation;
-    			target_pose1.position.x = first_pos_tcp.at(0) - 0.5; //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
+    			target_pose1.position.x = second_pos_tcp.at(0); //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
     			target_pose1.position.y = first_pos_tcp.at(1);//remains the same
     			target_pose1.position.z = first_pos_tcp.at(2);//remains the same 
 
@@ -195,33 +197,44 @@ public:
     			break;
 
 			case 2:
-				//if current position is equal to two move sensor to position three
+				//if current position is equal to one move sensor to position two
 
-    			ROS_INFO_STREAM("Moving Sensor from position 1 -> 2..."); //inform  user we are moving the sensor
+    			ROS_INFO_STREAM("Moving Sensor from position 2 -> 3..."); //inform  user we are moving the sensor
     			
-    			//move to position 2 from home
+    			//move to position 1 from home
     			move_group_interface_arm.setJointValueTarget(second_pos);
     			move_group_interface_arm.move();
 
-    			//position 2 has been reached
+    			//position 1 has been reached
     			//close the gripper and grasp sensor mount
     			control_gripper.data = "close";
     			rate.sleep();
     			pub_3.publish(control_gripper);
-    			
-    			//move to position 3
-    			//get the current position and orientation of the gripper relative to the base
+    			rate.sleep();
+    			//move to position 2
+    			 
+				    ocm.link_name = "r_wrist_roll_link";
+				    ocm.header.frame_id = "base_link";
+				    ocm.orientation.w = 1.0;
+				    ocm.absolute_x_axis_tolerance = 0.1;
+				    ocm.absolute_y_axis_tolerance = 0.0;
+				    ocm.absolute_z_axis_tolerance = 0.0;
+				    ocm.weight = 1.0;
+				    test_constraints.orientation_constraints.push_back(ocm);
+				    move_group_interface_arm.setPathConstraints(test_constraints);
+
+
     			current_pose = move_group_interface_arm.getCurrentPose("tool0");
-    			target_pose1.orientation = current_pose.pose.orientation;
-    			target_pose1.position.x = second_pos_tcp.at(0) - third_pos_tcp.at(0); //replace x position with next tcp 
-    			target_pose1.position.y = second_pos_tcp.at(1);//remains the same
-    			target_pose1.position.z = second_pos_tcp.at(2);//remains the same 
+    			target_pose2.orientation = current_pose.pose.orientation;
+    			target_pose2.position.x = third_pos_tcp.at(0); //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
+    			target_pose2.position.y = second_pos_tcp.at(1);//remains the same
+    			target_pose2.position.z = second_pos_tcp.at(2);//remains the same 
+
 
     			//set the target pose and move the arm 
-    			move_group_interface_arm.setPoseTarget(target_pose1);
+    			move_group_interface_arm.setPoseTarget(target_pose2);
     			move_group_interface_arm.move();
     			rate.sleep();
-
     			//open gripper
     			control_gripper.data = "open";
     			rate.sleep();
@@ -233,9 +246,10 @@ public:
     			move_group_interface_arm.move();
 
     			//inform to user 
-    			ROS_INFO_STREAM("Sensor moved from position: TWO to position: ONE");
+    			ROS_INFO_STREAM("Sensor moved from position: TWO to position: THREE");
     			current_sensor_position = 3; //update sensor position 
     			break;
+
 			case 3:
 				//if current position is equal to two move sensor to position three
 
@@ -254,13 +268,13 @@ public:
     			//move to position 3
     			//get the current position and orientation of the gripper relative to the base
     			current_pose = move_group_interface_arm.getCurrentPose("tool0");
-    			target_pose1.orientation = current_pose.pose.orientation;
-    			target_pose1.position.x = third_pos_tcp.at(0) - first_pos_tcp.at(0); //replace x position with next tcp 
-    			target_pose1.position.y = third_pos_tcp.at(1);//remains the same
-    			target_pose1.position.z = third_pos_tcp.at(2);//remains the same 
+    			target_pose3.orientation = current_pose.pose.orientation;
+    			target_pose3.position.x = first_pos_tcp.at(0); //replace x position with next tcp 
+    			target_pose3.position.y = third_pos_tcp.at(1);//remains the same
+    			target_pose3.position.z = third_pos_tcp.at(2);//remains the same 
 
     			//set the target pose and move the arm 
-    			move_group_interface_arm.setPoseTarget(target_pose1);
+    			move_group_interface_arm.setPoseTarget(target_pose3);
     			move_group_interface_arm.move();
     			rate.sleep();
 

@@ -164,10 +164,10 @@ int main(int argc, char **argv){
 	/**********************************************************/
 	//used for debugging 
 	//creating publisher object to pass boolean value to start move_node
-	ros::Publisher pub2 = nh.advertise<std_msgs::Bool>("sensing_node_boolean_move", 1000);
-	std_msgs::Bool blah;
+	//ros::Publisher pub2 = nh.advertise<std_msgs::Bool>("sensing_node_boolean_move", 1000);
+	//std_msgs::Bool blah;
 
-	blah.data = true;
+	//blah.data = true;
 	/**********************************************************/
 
 	//initalizing user input variabl
@@ -187,7 +187,7 @@ int main(int argc, char **argv){
 	pub.publish(msg_to_sensor);
 
 	//%%%%%%%%%%%%% 
-	pub2.publish(blah);
+	//pub2.publish(blah);
 	//used for debugging move node can delete
 	//%%%%%%%%%%%%%
 
