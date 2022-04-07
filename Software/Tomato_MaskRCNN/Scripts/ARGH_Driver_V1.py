@@ -56,13 +56,13 @@ import matlab.engine
 eng = matlab.engine.start_matlab()
 real=DepthCamera()
 # set paths for project
-# model_path = r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-# ImgFolder=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-# mask_export_location=r"C:\Users\ARGH\Documents\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+model_path = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
+ImgFolder="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
+mask_export_location="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
 
-model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+# model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+# ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+# mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
@@ -157,7 +157,7 @@ while(Run==TRUE):
     print("2: Determine Ripeness")
     print("3: Detect Depth")
     print("4: Visualize Tomato")
-    print("5: Change Camera Locatioin")
+    print("5: Change Camera Location")
     print("----------------------------------")
     
     print("User Input: ",end='') 
@@ -179,10 +179,13 @@ while(Run==TRUE):
         ########################################################
         # try:
         ImgName="realsense.jpg"
-        img,depth_frame =real.capture_image(30,True,ImgName,ImgFolder)
+        
+        print("Capturing Image")
+        img =real.capture_image(30,True,ImgName,ImgFolder)
         
         #run detection
         #######################################################
+        print("Running MASK Rcnn")
         results = model.detect([img], verbose=0)
         #pull masks from detection results
         r = results[0]
@@ -193,7 +196,7 @@ while(Run==TRUE):
         #export the masks of tomatoes found during detection
         #######################################################
         Export_Masks(mask_export_location,myMask)
-
+        
         # Case=2
     elif(Case=="2"):
         print("Detecting Ripeness")
@@ -283,7 +286,7 @@ while(Run==TRUE):
             print("X: ",ax,"Y: ",ay,"Z: ",az )
             print()
 
-        Case=4
+        # Case=4
     elif(Case=="4"):
         if harvest_target==-1:
             print("No Valid Harvest Target")
@@ -293,8 +296,8 @@ while(Run==TRUE):
             print()
             print() 
 
-            
-            implot = plt.imshow(img)
+            image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
+            implot = plt.imshow(image)
 
             # put a blue dot at (10, 20)
             center=plt.scatter(centerX,centerY,5,label='Center Point')

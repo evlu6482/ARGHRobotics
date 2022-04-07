@@ -1,3 +1,4 @@
+from cgitb import reset
 from cmath import pi
 from turtle import end_fill
 import pyrealsense2 as rs
@@ -7,6 +8,7 @@ import time
 from PIL import Image
 import os
 import keras
+
 #######################################################################################################
 # Author: Evan Shults
 # Last edit: 03/02/2022
@@ -37,22 +39,7 @@ class DepthCamera:
     #       result[1]: y, points down
     #       result[2]: z, points forward (away from camera)                        
     #
-    def convert_depth_to_phys_coord_using_realsense(x, y, depth, cameraInfo):  
-        _intrinsics = rs.intrinsics()
-        _intrinsics.width = cameraInfo.width
-        _intrinsics.height = cameraInfo.height
-        _intrinsics.ppx = cameraInfo.K[2]
-        _intrinsics.ppy = cameraInfo.K[5]
-        _intrinsics.fx = cameraInfo.K[0]
-        _intrinsics.fy = cameraInfo.K[4]
-        #_intrinsics.model = cameraInfo.distortion_model
-        _intrinsics.model  = rs.distortion.none  
-        _intrinsics.coeffs = [i for i in cameraInfo.D]  
-    
-        result = rs.rs2_deproject_pixel_to_point(_intrinsics, [x, y], depth)  
-        
-        #result[0]: right, result[1]: down, result[2]: forward
-        return -result[0], -result[1], result[2]
+
 
     def __init__(self):
         # Configure depth and color streams
@@ -71,24 +58,44 @@ class DepthCamera:
         config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 
         # Start streaming
+        self.resetcamera()
         self.pipeline.start(config)
+        
+    def convert_depth_to_phys_coord_using_realsense(x, y, depth, cameraInfo):  
+        _intrinsics = rs.intrinsics()
+        _intrinsics.width = cameraInfo.width
+        _intrinsics.height = cameraInfo.height
+        _intrinsics.ppx = cameraInfo.K[2]
+        _intrinsics.ppy = cameraInfo.K[5]
+        _intrinsics.fx = cameraInfo.K[0]
+        _intrinsics.fy = cameraInfo.K[4]
+        #_intrinsics.model = cameraInfo.distortion_model
+        _intrinsics.model  = rs.distortion.none  
+        _intrinsics.coeffs = [i for i in cameraInfo.D]  
+    
+        result = rs.rs2_deproject_pixel_to_point(_intrinsics, [x, y], depth)  
+        
+        #result[0]: right, result[1]: down, result[2]: forward
+        return -result[0], -result[1], result[2]
 
     def get_frame(self):
         
         frames = self.pipeline.wait_for_frames()
-        depth_frame = frames.get_depth_frame()
+        # depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
                 
         
-        depth_image = np.asanyarray(depth_frame.get_data())
+        # depth_image = np.asanyarray(depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
-        if not depth_frame or not color_frame:
-            return False, None, None
-        return True, depth_image, color_image
+    
+        if not color_frame:
+            return False, None
+        return True, color_image
         
 
 
     def capture_image(self,NumFrames:int,Save_Img:bool,Img_Name:str,ImgFolder:str):
+        
         #inputs:
             #NumFrames: Int, Number of frames to  stream before capturing image
             #Save_Img: Bool, True/False - true to save the final image to a location on the drive
@@ -97,41 +104,27 @@ class DepthCamera:
         #outputs:
             #img: 3 dimensional array with the rgb values of the captured image
     # Initialize Camera Intel Realsense 
-        point = (0, 0)
-        dc = DepthCamera()  
-        
-        # Create mouse event
-        # cv2.namedWindow("Color frame")
-        # cv2.setMouseCallback("Color frame", show_distance)
         Run=True
         count=0
 
         while Run==True:
             #grab frames from intel realsense
-            ret, depth_frame, color_frame = dc.get_frame()
-            
-            
-        
-            # RGB_at_distance = color_frame[point[1], point[0]]
-        
-            
-            # cv2.putText(color_frame, "{}".format(RGB_at_distance), (20,450), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
-            
-            # cv2.imshow("Color frame", color_frame)
-            key = cv2.waitKey(1)
-            #time.sleep(.5)
+            ret, color_frame = self.get_frame()
+
             count=count +1
             if count == NumFrames:
                 Run = False
                 os.chdir(ImgFolder)
                 img=cv2.cvtColor(color_frame,cv2.COLOR_BGR2RGB)
-                
+                img=color_frame
                 if Save_Img:
                     img_save= Image.fromarray(img)
                     img_save.save(Img_Name)
         
-            
-        return img,depth_frame
+        
+        return img
+
+    
 
     def release(self):
         self.pipeline.stop()
@@ -140,18 +133,19 @@ class DepthCamera:
     def resetcamera(self):
         
         self.device.hardware_reset()
+        
 
     def get_depth_intrin(self,xpoint,ypoint):
         # Wait for a coherent pair of frames: depth and color
-    
+        
         frames = self.pipeline.wait_for_frames()
         aligned_frames = self.align.process(frames)
        
         depth_frame = aligned_frames.get_depth_frame()
         depth_intrin = depth_frame.profile.as_video_stream_profile().intrinsics
         depth = depth_frame.get_distance(xpoint,ypoint)
-        self.release()
-        self.pipeline.start(rs.config())
+        # self.release()
+        # self.pipeline.start(rs.config())
         
         return depth_intrin,depth
 #Functions and classes added by Collin Rasbid:
@@ -213,15 +207,15 @@ def ripeness(Img_Name:str,ImgFolder,mask):
     # singleTomato = cv2.imread(filename,cv2.IMREAD_UNCHANGED)
     os.chdir(ImgFolder)
     
-    img = cv2.imread(Img_Name,cv2.IMREAD_UNCHANGED)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    image = cv2.imread(Img_Name,cv2.IMREAD_UNCHANGED)
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    numx=len(img)
-    numy=len(img[0])
+    numx=len(image)
+    numy=len(image[0])
 
     Black_array=np.zeros((numx,numy,3))
 
-    singleTomato=img
+    singleTomato=image
     numPixelTomato=0
 # for i=1:x
 #    for j=1:y
@@ -244,9 +238,9 @@ def ripeness(Img_Name:str,ImgFolder,mask):
             else:
                 numPixelTomato+=1
                 
-
-    # dispimg=Image.fromarray(singleTomato,'RGB')
-    # dispimg.show()
+    
+    dispimg=Image.fromarray(singleTomato)
+    dispimg.show()
 
 
 
