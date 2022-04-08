@@ -213,9 +213,6 @@ public:
 				//if current position is equal to one move sensor to position two
 
     			ROS_INFO_STREAM("Moving Sensor from position 2 -> 3..."); //inform  user we are moving the sensor
-    			
-
-
     			//move to position 1 from home
     			move_group_interface_arm.setJointValueTarget(second_pos);
     			move_group_interface_arm.move();
