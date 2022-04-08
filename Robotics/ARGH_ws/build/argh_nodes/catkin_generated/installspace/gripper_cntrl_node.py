@@ -20,7 +20,7 @@ def grip_some_tomatos(data):
   s.sendall(formatted)  
   data = s.recv(1024)   
   s.close 
-  
+  time.sleep(2.4)    
 
                             
                             

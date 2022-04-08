@@ -38,25 +38,22 @@ References
 #include <stdlib.h>
 #include <vector>
 
-//using a global variable for sensing position and initializing planning group
+//for c++ sleep
+#include <chrono>
+#include <thread>
+
+//using a global variable for initiailizing sensing position and initializing planning group
 int current_sensor_position { 1 };
 static const std::string PLANNING_GROUP_ARM = "manipulator";
-//static const std::string PLANNING_GROUP_GRIPPER = "robotiq_rf85_gripper";
 
-//setting up name of the planning group we are using
-
-//moveit::planning_interface::MoveGroupInterface move_group_interface_gripper(PLANNING_GROUP_GRIPPER);
-
-//using global variables to store joint positions for positions home->1->3
+//storing joint positions for positions home -> 1 -> 2 -> 3 
 //elements go by shoulder_pan, shoulder_lift, elbow_joint, wrist_1, wrist_2, wrist_3
 const std::vector<double> home_pos{5.96377277374, -0.5757077497, -2.556312084197, -3.14978327373, -0.3186467329608,  3.139601707458496};
 const std::vector<double> first_pos{4.159873008728027, -1.952275892297262, -2.169930934906006, -3.856384655038351, -1.4991801420794886, 2.637144088745117};
 const std::vector<double> second_pos{5.128342628479, -1.71154989818715, -2.543005466461, -3.7090360126891078, -1.6590359846698206, 3.584813117980957};
 const std::vector<double> third_pos{5.951443672180176, -1.8237282238402308, -2.34622882041931152, -3.725156923333639, -1.7076171080218714, 4.421555519104004};
 
-
-//will add more for other tcp used in linear move to other positions
-//%%%%%%%%%%%%%%%%%%%%%%% NEED TO UPDATE FIRST
+//storing tcp positions relative to base for positions 1 -> 3
 const std::vector<double> first_pos_tcp{0.37202, 0.25562 , 0.174};
 const std::vector<double> second_pos_tcp{0.0663, 0.25562 , 0.174};
 const std::vector<double> third_pos_tcp{-0.2547, 0.25562 , 0.174};
@@ -110,82 +107,98 @@ public:
 
   	//intialize rate
   	ros::Rate rate(2);
-  	moveit::planning_interface::MoveGroupInterface move_group_interface_arm(PLANNING_GROUP_ARM);
+
   	//initializing messages to be published
     std_msgs::Int32 sensor_position; //integer for sensor position
     std_msgs::Bool move_the_sensor_bool; //boolean to stop computations in this node
     std_msgs::String control_gripper; //string to tell the gripper what to do
-    bool success; // was used for io but io was removed
-
 
     if(input.data == true){
     	
     	//insantiate plan group
+  		moveit::planning_interface::MoveGroupInterface move_group_interface_arm(PLANNING_GROUP_ARM);
   		moveit::planning_interface::MoveGroupInterface::Plan move_plan;
-		
-		//initialize variables to be used inside of switch statement, used for cartesian move	
-  		geometry_msgs::Pose target_pose1;
-  		geometry_msgs::Pose target_pose2;
-  		geometry_msgs::Pose target_pose3;
-  		geometry_msgs::PoseStamped current_pose;
+			
 
+			//initialize variables to be used inside of switch statement, used for cartesian move	
+  		geometry_msgs::Pose target_pose1;
+
+  		//for cartesian planning
+  		geometry_msgs::Pose cartesian_target_pose1;
+			std::vector<geometry_msgs::Pose> waypoints;
+			moveit_msgs::RobotTrajectory trajectory;
+			double fraction;
+			moveit::planning_interface::MoveGroupInterface::Plan  goal_plan;
 			moveit_msgs::Constraints test_constraints;
 			moveit_msgs::OrientationConstraint ocm;
+
+			//initialize path constraints
+			ocm.link_name = "r_wrist_roll_link";
+	    ocm.header.frame_id = "base_link";
+	    ocm.orientation.w = 1.0;
+	    ocm.absolute_x_axis_tolerance = 0.001;
+	    ocm.absolute_y_axis_tolerance = 0.0;
+	    ocm.absolute_z_axis_tolerance = 0.0;
+	    ocm.weight = 1.0;
+	    test_constraints.orientation_constraints.push_back(ocm);
+
   		//move to the home position just incase we didnt return to home before
   		move_group_interface_arm.setJointValueTarget(home_pos);
   		move_group_interface_arm.move();
 
-/*    	//activate gripper
-    	control_gripper.data = "start";
+  		//open gripper before moving to first position
+  		control_gripper.data = "open";
+  		pub_3.publish(control_gripper);
     	rate.sleep();
-    	pub_3.publish(control_gripper);*/
 
     	//check current sensor position 
     	switch(current_sensor_position){
     		case 1: 
     			//if current position is equal to one move sensor to position two
-
     			ROS_INFO_STREAM("Moving Sensor from position 1 -> 2..."); //inform  user we are moving the sensor
     			
+
+
     			//move to position 1 from home
     			move_group_interface_arm.setJointValueTarget(first_pos);
     			move_group_interface_arm.move();
 
+			    move_group_interface_arm.setPathConstraints(test_constraints);
+
+
+
+
     			//position 1 has been reached
     			//close the gripper and grasp sensor mount
     			control_gripper.data = "close";
-    			rate.sleep();
     			pub_3.publish(control_gripper);
     			rate.sleep();
     			//move to position 2
     			 
-				    ocm.link_name = "r_wrist_roll_link";
-				    ocm.header.frame_id = "base_link";
-				    ocm.orientation.w = 1.0;
-				    ocm.absolute_x_axis_tolerance = 0.1;
-				    ocm.absolute_y_axis_tolerance = 0.0;
-				    ocm.absolute_z_axis_tolerance = 0.0;
-				    ocm.weight = 1.0;
-				    test_constraints.orientation_constraints.push_back(ocm);
-				    move_group_interface_arm.setPathConstraints(test_constraints);
+    			//move to position two
 
+    			//alright so set the first waypoint
+    			cartesian_target_pose1 = move_group_interface_arm.getCurrentPose().pose;
+    			//push back to waypoints
+    			waypoints.push_back(cartesian_target_pose1);
+    			//current pose set get next
+    			cartesian_target_pose1.position.x = second_pos_tcp.at(0);
+    			//set it 
+    			waypoints.push_back(cartesian_target_pose1);
+    			fraction = move_group_interface_arm.computeCartesianPath(waypoints, 0.01, 0.0, trajectory);
+    			std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    			current_pose = move_group_interface_arm.getCurrentPose("tool0");
-    			target_pose1.orientation = current_pose.pose.orientation;
-    			target_pose1.position.x = second_pos_tcp.at(0); //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
-    			target_pose1.position.y = first_pos_tcp.at(1);//remains the same
-    			target_pose1.position.z = first_pos_tcp.at(2);//remains the same 
-
-
-    			//set the target pose and move the arm 
-    			move_group_interface_arm.setPoseTarget(target_pose1);
-    			move_group_interface_arm.move();
+    			goal_plan.trajectory_ = trajectory;
+    			move_group_interface_arm.execute(goal_plan);
     			rate.sleep();
     			//open gripper
     			control_gripper.data = "open";
-    			rate.sleep();
     			pub_3.publish(control_gripper);
     			rate.sleep();
+
+    			//clear path constraints
+    			move_group_interface_arm.clearPathConstraints();
+    			
 
     			//after gripper is open reaturn to the home position
     			move_group_interface_arm.setJointValueTarget(home_pos);
@@ -201,46 +214,41 @@ public:
 
     			ROS_INFO_STREAM("Moving Sensor from position 2 -> 3..."); //inform  user we are moving the sensor
     			
+
+
     			//move to position 1 from home
     			move_group_interface_arm.setJointValueTarget(second_pos);
     			move_group_interface_arm.move();
 
-    			//position 1 has been reached
+    			//position 2 has been reached
     			//close the gripper and grasp sensor mount
     			control_gripper.data = "close";
-    			rate.sleep();
     			pub_3.publish(control_gripper);
     			rate.sleep();
     			//move to position 2
     			 
-				    ocm.link_name = "r_wrist_roll_link";
-				    ocm.header.frame_id = "base_link";
-				    ocm.orientation.w = 1.0;
-				    ocm.absolute_x_axis_tolerance = 0.1;
-				    ocm.absolute_y_axis_tolerance = 0.0;
-				    ocm.absolute_z_axis_tolerance = 0.0;
-				    ocm.weight = 1.0;
-				    test_constraints.orientation_constraints.push_back(ocm);
-				    move_group_interface_arm.setPathConstraints(test_constraints);
+    			//move to position two
 
-
-    			current_pose = move_group_interface_arm.getCurrentPose("tool0");
-    			target_pose2.orientation = current_pose.pose.orientation;
-    			target_pose2.position.x = third_pos_tcp.at(0); //replace x position with next tcp MAYBE FIX THIS TOO CAUSE IT MIGHT BE WRONG
-    			target_pose2.position.y = second_pos_tcp.at(1);//remains the same
-    			target_pose2.position.z = second_pos_tcp.at(2);//remains the same 
-
-
-    			//set the target pose and move the arm 
-    			move_group_interface_arm.setPoseTarget(target_pose2);
-    			move_group_interface_arm.move();
+    			//alright so set the first waypoint
+    			cartesian_target_pose1 = move_group_interface_arm.getCurrentPose().pose;
+    			//push back to waypoints
+    			waypoints.push_back(cartesian_target_pose1);
+    			//current pose set get next
+    			cartesian_target_pose1.position.x = third_pos_tcp.at(0);
+    			//set it 
+    			waypoints.push_back(cartesian_target_pose1);
+    			fraction = move_group_interface_arm.computeCartesianPath(waypoints, 0.01, 0.0, trajectory);
+    			std::this_thread::sleep_for(std::chrono::seconds(4));
+    			goal_plan.trajectory_ = trajectory;
+    			move_group_interface_arm.execute(goal_plan);
     			rate.sleep();
     			//open gripper
     			control_gripper.data = "open";
-    			rate.sleep();
     			pub_3.publish(control_gripper);
     			rate.sleep();
 
+    			//clear path constraints
+    			move_group_interface_arm.clearPathConstraints();
     			//after gripper is open reaturn to the home position
     			move_group_interface_arm.setJointValueTarget(home_pos);
     			move_group_interface_arm.move();
@@ -251,46 +259,55 @@ public:
     			break;
 
 			case 3:
-				//if current position is equal to two move sensor to position three
+				//if current position is equal to one move sensor to position two
 
-    			ROS_INFO_STREAM("Moving Sensor from position 3 -> 1, ALL SENSING POSITIONS CHECKED"); //inform  user we are moving the sensor
+    			ROS_INFO_STREAM("Moving Sensor from position 3 -> 1... ALL SENSING POSITIONS CHECKED"); //inform  user we are moving the sensor
+    			
 
-    			//move to position 3 from home
+
+    			//move to position 1 from home
     			move_group_interface_arm.setJointValueTarget(third_pos);
     			move_group_interface_arm.move();
 
-    			//position 2 has been reached
+			    move_group_interface_arm.setPathConstraints(test_constraints);
+
+    			//position 1 has been reached
     			//close the gripper and grasp sensor mount
     			control_gripper.data = "close";
     			rate.sleep();
     			pub_3.publish(control_gripper);
-    			
-    			//move to position 3
-    			//get the current position and orientation of the gripper relative to the base
-    			current_pose = move_group_interface_arm.getCurrentPose("tool0");
-    			target_pose3.orientation = current_pose.pose.orientation;
-    			target_pose3.position.x = first_pos_tcp.at(0); //replace x position with next tcp 
-    			target_pose3.position.y = third_pos_tcp.at(1);//remains the same
-    			target_pose3.position.z = third_pos_tcp.at(2);//remains the same 
-
-    			//set the target pose and move the arm 
-    			move_group_interface_arm.setPoseTarget(target_pose3);
-    			move_group_interface_arm.move();
     			rate.sleep();
+    			//move to position 2
+    			 
+    			//move to position two
 
+    			//alright so set the first waypoint
+    			cartesian_target_pose1 = move_group_interface_arm.getCurrentPose().pose;
+    			//push back to waypoints
+    			waypoints.push_back(cartesian_target_pose1);
+    			//current pose set get next
+    			cartesian_target_pose1.position.x = first_pos_tcp.at(0);
+    			//set it 
+    			waypoints.push_back(cartesian_target_pose1);
+    			fraction = move_group_interface_arm.computeCartesianPath(waypoints, 0.01, 0.0, trajectory);
+    			std::this_thread::sleep_for(std::chrono::seconds(5));
+    			goal_plan.trajectory_ = trajectory;
+    			move_group_interface_arm.execute(goal_plan);
+    			rate.sleep();
     			//open gripper
     			control_gripper.data = "open";
-    			rate.sleep();
     			pub_3.publish(control_gripper);
     			rate.sleep();
 
+    			//clear path constraints
+    			move_group_interface_arm.clearPathConstraints();
     			//after gripper is open reaturn to the home position
     			move_group_interface_arm.setJointValueTarget(home_pos);
     			move_group_interface_arm.move();
 
     			//inform to user 
     			ROS_INFO_STREAM("Sensor moved from position: THREE to position: ONE");
-    			current_sensor_position = 1; //update sensor position 
+    			current_sensor_position = 2; //update sensor position 
     			break;
 			default:
 				ROS_FATAL_STREAM("This switch case in MoveSensor_callback should not be reached");

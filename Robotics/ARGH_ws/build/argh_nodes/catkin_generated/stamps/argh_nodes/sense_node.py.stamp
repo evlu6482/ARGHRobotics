@@ -15,7 +15,7 @@ def callback(data):
         rospy.loginfo("Beginning Sensing")
 
         #dummy values
-        tomato_found = True
+        tomato_found = False
         geometry = Pose()
         geometry.position.x = 0
         geometry.position.y = 0
@@ -26,7 +26,10 @@ def callback(data):
             rate.sleep()
         else:
             pub_move.publish(Bool(True))
+            rate.sleep()
+            rospy.loginfo("No tomato found, moving sensor position")
         pub_sense.publish(Bool(False))
+        rate.sleep()
 
 def sense_node():
     rospy.init_node('sense_node',anonymous=True)

@@ -156,7 +156,7 @@ int main(int argc, char **argv){
 	ros::init(argc, argv, "argh_control_node");
 	ros::NodeHandle nh;
 
-	ros::Rate rate(2); // initializing sleep rate 2Hz
+	ros::Rate rate(5); // initializing sleep rate 2Hz
 
 	//creating publisher object for starting sensing node
 	ros::Publisher pub = nh.advertise<std_msgs::Bool>("sensing_node_input", 1000);
@@ -172,6 +172,7 @@ int main(int argc, char **argv){
 
 	//initalizing user input variabl
 	std::string user_input;
+	rate.sleep();
 
 	//prompt to user if they want to begin 
 	std::cout << "\n\nWelcome to ARGHRobotics Harvesting Program";
@@ -183,9 +184,9 @@ int main(int argc, char **argv){
 	msg_to_sensor.data = true; //hopefully this begins the sensor node
 	
 	//publish on "sensing_node_input" topic
-	rate.sleep();
+	
 	pub.publish(msg_to_sensor);
-
+	rate.sleep();
 	//%%%%%%%%%%%%% 
 	//pub2.publish(blah);
 	//used for debugging move node can delete
