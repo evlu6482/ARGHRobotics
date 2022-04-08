@@ -56,13 +56,13 @@ import matlab.engine
 eng = matlab.engine.start_matlab()
 real=DepthCamera()
 # set paths for project
-model_path = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
-ImgFolder="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
-mask_export_location="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
+# model_path = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
+# ImgFolder="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
+# mask_export_location="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
 
-# model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-# ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-# mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
@@ -140,53 +140,53 @@ TomatoDict = {
 
 #setup conditional statements to run loop
 Run=TRUE
-Case=5
+Case="5"
 Ripe_Tomato=False
 harvest_target=-1   
 Camera_Location="A"
 
 #Main Execution Loop
-while(Run==TRUE):
+while(Run==TRUE): #code is currently setup so that it is not interactable, comment all the "Case=" statements at the end of the blocks to turn on interactivity
 
-    print("----------------------------------")
-    print("Welcome to ARGH Tomato Detection")
-    print("----------------------------------")
-    print("Select Run Option")
-    print("0: Shut Down")
-    print("1: Take New Image and Detect")
-    print("2: Determine Ripeness")
-    print("3: Detect Depth")
-    print("4: Visualize Tomato")
-    print("5: Change Camera Location")
-    print("----------------------------------")
+    # print("----------------------------------")
+    # print("Welcome to ARGH Tomato Detection")
+    # print("----------------------------------")
+    # print("Select Run Option")
+    # print("0: Shut Down")
+    # print("1: Take New Image and Detect")
+    # print("2: Determine Ripeness")
+    # print("3: Detect Depth")
+    # print("4: Visualize Tomato")
+    # print("5: Change Camera Location")
+    # print("----------------------------------")
     
-    print("User Input: ",end='') 
-    Case=input()
+    # print("User Input: ",end='') #uncomment these two lines to enable interactivity
+    # Case=input()
 
     
                 
-    if(Case=="0"):
+    if(Case=="0"): #end looping
         print()
         print("Shutting Down")
         Run=FALSE
 
-    elif(Case=="1"):
+    elif(Case=="1"): #image capture and tomato detection
         print()
         print("Running Image Detection")
         #run image detection
          
         #Capture Image from camera
         ########################################################
-        # try:
-        ImgName="realsense.jpg"
+        
+        ImgName="realsense.jpg" #set name for image export
         
         print("Capturing Image")
-        img =real.capture_image(30,True,ImgName,ImgFolder)
+        img =real.capture_image(30,True,ImgName,ImgFolder)#run image capture function for Intel Realsense
         
         #run detection
         #######################################################
         print("Running MASK Rcnn")
-        results = model.detect([img], verbose=0)
+        results = model.detect([img], verbose=0) #maskrcnn model detection
         #pull masks from detection results
         r = results[0]
         #isolate the mask data from the detection results
@@ -195,39 +195,39 @@ while(Run==TRUE):
 
         #export the masks of tomatoes found during detection
         #######################################################
-        Export_Masks(mask_export_location,myMask)
+        # Export_Masks(mask_export_location,myMask) #code for exporting mask data if needed
         
-        # Case=2
-    elif(Case=="2"):
+        Case="2"
+    elif(Case=="2"): #Ripeness Detection
         print("Detecting Ripeness")
         print() 
         print()
         count=0
         
-        Ripe=[False for x in range(NumTomato)]
+        Ripe=[False for x in range(NumTomato)] #preinitialize array for all tomatos in scene
         
         for i in range(0, NumTomato):
             
-            output=ripeness(ImgName,ImgFolder,myMask[:,:,i])
+            output=ripeness(ImgName,ImgFolder,myMask[:,:,i]) #detect ripeness on ith tomato
             Ripe[i]=output
             print("Tomato ",i, " is ripe: ", Ripe[i])
             count+=1
         
 
         
-        for i in range(0, NumTomato):
+        for i in range(0, NumTomato): #loop through tomatoes and set first ripe tomato as harvest target
             if Ripe[i]==True:
                 harvest_target=i
                 Ripe_Tomato=True
                 break
-        if(harvest_target==-1):
+        if(harvest_target==-1):#if no tomatoes are ripe
             print("No Valid Harvest Target")
         else:
             print("Harvest Target Is Tomato: ", harvest_target)
 
-        # Case=3
+        Case="3"
 
-    elif(Case=="3"):
+    elif(Case=="3"):#ellipse fitting and cartesian location detection
         if harvest_target==-1:
             print("No Valid Harvest Target")
             
@@ -237,43 +237,42 @@ while(Run==TRUE):
             print()
             print()
             
-            numx=len(myMask)
+            numx=len(myMask) #determine the resolution of the image
             # print(numx)
             numy=len(myMask[0])
             # print(numy)
             
 
 
-            edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
+            # edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
 
-            # for i in range(0,NumTomato):
-            mask_in=(myMask[:,:,harvest_target])
-            # input=matlab.double(input.tolist())
-            # Edge_output=eng.GetEdges(input)
-            xpix , ypix =GetEdges(mask_in)
-            xpix=matlab.double(xpix.tolist())
+            
+            mask_in=(myMask[:,:,harvest_target])#set the submask as the mask of the harvest target
+            
+            xpix , ypix =GetEdges(mask_in) #run get edge function to get a mask of only edges of the tomato
+            xpix=matlab.double(xpix.tolist()) #change xpix and ypix into terms matlab understands
             ypix=matlab.double(ypix.tolist())
 
-            print("Running Fit_Ellipse")
+            print("Running Fit_Ellipse")#run ellipse fitting function in matlab engine
             [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line]=eng.fit_ellipse(xpix,ypix,nargout=12)
-            rotated_ellipse=np.asarray(rotated_ellipse)
+            rotated_ellipse=np.asarray(rotated_ellipse) #convert variable type back to python typing
             print("Ellipse Parameters Found")
 
 
-            print("Detecting Tomato Location...")
+            print("Detecting Tomato Location...") #determine the centerpoint of the fit ellipse
             centerX=round(statistics.mean(rotated_ellipse[1,:]))
             centerY=round(statistics.mean(rotated_ellipse[0,:]))
 
             
-            depth_intrin, depth = real.get_depth_intrin(centerX,centerY)
-            depth_point = rs.rs2_deproject_pixel_to_point(depth_intrin, [centerX,centerY], depth)
+            depth_intrin, depth = real.get_depth_intrin(centerX,centerY) #get depth data from camera
+            depth_point = rs.rs2_deproject_pixel_to_point(depth_intrin, [centerX,centerY], depth) #deproject depth data into cartesian data
 
             #TODO need to offset for center of tomato, currently at front of tomato
             print("Location of Center Point In Camera Frame:")
             print("X: ",depth_point[0],"Y: ",depth_point[1],"Z: ", depth_point[2])
             print()
 
-            cx,cy=calibratecamera(depth_point[0],depth_point[1],depth_point[2])
+            cx,cy=calibratecamera(depth_point[0],depth_point[1],depth_point[2]) #push depth data through calibration function 
             cz=depth_point[2]
 
             print("Location of Calibrated Center Point In Camera Frame:")
@@ -281,13 +280,13 @@ while(Run==TRUE):
             print()
                 
             print("Performing Transformation From Position ", Camera_Location)
-            ax,ay,az=rotateaboutX(cx,cy,cz,Camera_Location)#TODO implement code for secondary camera locations
+            ax,ay,az=rotateaboutX(cx,cy,cz,Camera_Location)#Transform about x axis to move point data to arm origin
             print("Location of Center Point In Robot Frame:")
             print("X: ",ax,"Y: ",ay,"Z: ",az )
             print()
 
-        # Case=4
-    elif(Case=="4"):
+        Case="4"
+    elif(Case=="4"): #image verification
         if harvest_target==-1:
             print("No Valid Harvest Target")
             
@@ -296,21 +295,21 @@ while(Run==TRUE):
             print()
             print() 
 
-            image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
-            implot = plt.imshow(image)
+            image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #convert pixels from bgr to rgb
+            implot = plt.imshow(image)#plot image
 
             # put a blue dot at (10, 20)
-            center=plt.scatter(centerX,centerY,5,label='Center Point')
+            center=plt.scatter(centerX,centerY,5,label='Center Point') #plot center point of ellipse
             # center.set_label('Tomatoe Center Point"')
-            ellipse=plt.scatter(rotated_ellipse[1,:],rotated_ellipse[0,:],5,label='Fit Ellipse')
-            plt.legend(handles=[center, ellipse])
+            ellipse=plt.scatter(rotated_ellipse[1,:],rotated_ellipse[0,:],5,label='Fit Ellipse')#plot ellipse
+            plt.legend(handles=[center, ellipse])#plot legends
             plt.show(block=False)
             
-            plt.pause(5)
+            plt.pause(5)#pause to hold plot open
             plt.close()
-        # Case=0
-        # Run=False
-    elif(Case=="5"):
+        Case="0"
+        
+    elif(Case=="5"):#set location for camera sensing position
         find_Location=True
         while(find_Location==True):
             print("Enter New Camera Location: A, B, or C: ")
@@ -336,7 +335,7 @@ while(Run==TRUE):
             else:
                 print("Incorrect Input, enter Either A, B, or C")
 
-        # Case=1
+        Case="1"
         
     else:
         print("incorrect keyboard input")

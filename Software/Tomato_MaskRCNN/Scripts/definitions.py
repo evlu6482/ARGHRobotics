@@ -239,8 +239,8 @@ def ripeness(Img_Name:str,ImgFolder,mask):
                 numPixelTomato+=1
                 
     
-    dispimg=Image.fromarray(singleTomato)
-    dispimg.show()
+    # dispimg=Image.fromarray(singleTomato)
+    # dispimg.show()
 
 
 

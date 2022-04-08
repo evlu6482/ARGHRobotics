@@ -38,9 +38,9 @@ while Run==True:
     cv2.imshow("depth frame", depth_frame)
     cv2.imshow("Color frame", color_frame)
     key = cv2.waitKey(1)
-    time.sleep(2)
+    # time.sleep(2)
     count=count +1
-    if count == 3:
+    if count == 2000:
         Run =  False
         color_frame=cv2.cvtColor(color_frame,cv2.COLOR_BGR2RGB)
         img= Image.fromarray(color_frame)

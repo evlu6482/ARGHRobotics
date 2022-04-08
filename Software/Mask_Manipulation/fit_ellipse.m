@@ -1,8 +1,8 @@
-function ellipse_t = fit_ellipse( x,y,axis_handle )
+function [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis] = fit_ellipse( x,y )
 %
 % fit_ellipse - finds the best fit to an ellipse for the given set of points.
 %
-% Format:   ellipse_t = fit_ellipse( x,y,axis_handle )
+% Format:   [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis] = fit_ellipse( x,y,axis_handle )
 %
 % Input:    x,y         - a set of points in 2 column vectors. AT LEAST 5 points are needed !
 %           axis_handle - optional. a handle to an axis, at which the estimated ellipse 
@@ -153,7 +153,7 @@ y = y-mean_y;
 % the estimation for the conic equation of the ellipse
 X = [x.^2, x.*y, y.^2, x, y ];
 a = sum(X)/(X'*X);
-
+axis_handle=gca
 % check for warnings
 if ~isempty( lastwarn )
     disp( 'stopped because of a warning regarding matrix inversion' );
