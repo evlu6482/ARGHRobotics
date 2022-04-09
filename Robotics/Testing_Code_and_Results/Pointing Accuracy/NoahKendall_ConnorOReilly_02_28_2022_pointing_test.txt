@@ -1,0 +1,56 @@
+============================
+Results from 30 tests without removing outliers: 
+============================
+ Max offset in X position : 40.000000 [mm]
+ Max offset in Y position : 157.380000 [mm]
+ Max offset in Z position : 0.400000 [mm]
+-----------------------------------------------
+ Min offset in X position : 0.026000 [mm]
+ Min offset in X position : 17.265000 [mm]
+ Min offset in X position : 0.098000 [mm]
+-----------------------------------------------
+ Avg offset in X position : 1.479677 [mm]
+ Avg offset in Y position : 22.215633 [mm]
+ Avg offset in Z position : 0.166300 [mm]
+-----------------------------------------------
+ Max Relative Error in X position : 100.000000 [%]
+ Max Relative Error in Y position : 124.828571 [%]
+ Max Relative Error in Z position : 1.000000 [%]
+-----------------------------------------------
+ Min Relative Error in X position : 0.026000 [%]
+ Min Relative Error in Y position : 17.340000 [%]
+ Min Relative Error in Z position : 0.109490 [%]
+-----------------------------------------------
+ Avg Relative Error in X position : 4.056887 [%]
+ Avg Relative Error in Y position : 44.749711 [%]
+ Avg Relative Error in Z position : 0.292178 [%]
+%%%%%%%%%%%%
+%%%%%%%%%%%%
+%%%%%%%%%%%%
+============================
+Results from 30 tests with removing outliers: 
+============================
+ Max offset in X position : 0.238000 [mm]
+ Max offset in Y position : 22.590000 [mm]
+ Max offset in Z position : 0.300000 [mm]
+-----------------------------------------------
+ Min offset in X position : 0.040000 [mm]
+ Min offset in X position : 17.300000 [mm]
+ Min offset in X position : 0.107000 [mm]
+-----------------------------------------------
+ Avg offset in X position : 0.150416 [mm]
+ Avg offset in Y position : 17.586160 [mm]
+ Avg offset in Z position : 0.156720 [mm] 
+-----------------------------------------------
+ Max Relative Error in X position : 2.210098 [%]
+ Max Relative Error in Y position : 86.735000 [%]
+ Max Relative Error in Z position : 1.000000 [%]
+-----------------------------------------------
+ Min Relative Error in X position : 0.120719 [%]
+ Min Relative Error in Y position : 17.340000 [%]
+ Min Relative Error in Z position : 0.109490 [%]
+-----------------------------------------------
+ Avg Relative Error in X position : 0.841353 [%]
+ Avg Relative Error in Y position : 43.590949 [%]
+ Avg Relative Error in Z position : 0.285658 [%]
+-----------------------------------------------
