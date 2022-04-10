@@ -1,307 +1,35 @@
 #!/usr/bin/env python2
 
 import rospy
+import os
+import numpy as np
 from std_msgs.msg import Bool
 from geometry_msgs.msg import Pose
 
-# IMPORT ALL ARGH_Driver_V1.py INITIALIZATION HERE
-
-print("#################################################################")
-print("Initializing Driver Function")
-
-#MaskRCNN packages
-from ast import Num
-from importlib import find_loader
-from operator import truediv
-import os
-from pickle import FALSE, TRUE
-import sys
-from wsgiref.simple_server import software_version
-import keras
-import random
-import math
-import statistics
-import re
-import time
-import tensorflow as tf
-import numpy as np
-import cv2
-import matplotlib
-import matplotlib.pyplot as plt
-import skimage
-import itertools
-import logging
-import json
-import re
-import numpy
-import random
-from collections import OrderedDict
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.lines as lines
-from matplotlib.patches import Polygon
-from keras.preprocessing.image import load_img
-from PIL import Image
-import warnings
-from matplotlib import pyplot as plt
-warnings.filterwarnings('ignore', '.*do not.*', )
-warnings.warn('DelftStack')
-warnings.warn('Do not show this message')
-
-tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-#camera packages
-import pyrealsense2 as rs
-import time
-
-from python_scripts.definitions import *
-
-#matlab packages
-
-import matlab.engine
-eng = matlab.engine.start_matlab()
-real=DepthCamera()
-# set paths for project
-model_path = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
-ImgFolder="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
-mask_export_location="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
-
-# model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-# ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-# mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
-
-# Root directory of the project
-ROOT_DIR = os.path.abspath("./../")
-# Import Mask RCNN
-sys.path.append(ROOT_DIR)  # To find local version of the library
-# from mrcnn.config import Config
-# # from mrcnn import utils
-# import mrcnn.model as modellib
-# from mrcnn import visualize
-# from mrcnn.model import log
-#import and setup MaskRcnn Config
-# Directory to save logs and trained model
-
-from python_scripts.config import Config
-import python_scripts.model as modellib
-
-MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-
-# Local path to trained weights file
-# COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
-# # Download COCO trained weights from Releases if needed
-# if not os.path.exists(COCO_MODEL_PATH):
-#     utils.download_trained_weights(COCO_MODEL_PATH)
-# print("#################################################################")
-print("Loading Mask Configs")
-print("#################################################################")
-class TomatoConfig(Config):
-    """Configuration for training on the toy  dataset.
-    Derives from the base Config class and overrides some values.
-    """
-    # Give the configuration a recognizable name
-    NAME = "tomato"
-
-    # We use a GPU with 12GB memory, which can fit two images.
-    # Adjust down if you use a smaller GPU.
-    IMAGES_PER_GPU = 2
-
-    # Number of classes (including background)
-    NUM_CLASSES = 1 + 1  # Background + tomato
-
-    # Number of training steps per epoch
-    STEPS_PER_EPOCH = 100
-
-    # Skip detections with < 99% confidence
-    DETECTION_MIN_CONFIDENCE = 0.99
-
-    IMAGE_RESIZE_MODE = "square"
-config = TomatoConfig()
-
-# Create model in inference mode
-model = modellib.MaskRCNN(mode="inference", config=config,
-                          model_dir=MODEL_DIR)
-
-
-class InferenceConfig(TomatoConfig):
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
-
-inference_config = InferenceConfig()
-
-# Recreate the model in inference mode
-model = modellib.MaskRCNN(mode="inference",
-                          config=inference_config,
-                          model_dir=MODEL_DIR)
-
-
-# Load trained weights
-model.load_weights(model_path, by_name=True)
-
-####
-
-Camera_Location = 1
-
-# END IMPORT
 
 pub_sense = rospy.Publisher('sensing_node_input',Bool,queue_size = 10) # reset node
 pub_move = rospy.Publisher('sensing_node_boolean_move',Bool, queue_size= 10)
 pub_geom = rospy.Publisher('coordinate_tomato',Pose, queue_size = 10)
+Camera_Location = 1
+script_location = ""
+coord_location = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
 
 def sense_callback(data):
     rate = rospy.Rate(2)
     if(data.data==True):
         #RUN SCRIPT
         rospy.loginfo("Beginning Sensing")
-        harvest_target=-1
-        Ripe_Tomato=False
+
+        # create csv with camera location
+
+        # write Camera_Location to text file
+        os.path.join(script_location)
+        os.system("conda run -n maskrcnn python -Wignore ARGH_Driver_V1.py")
+        os.path.join(coord_location)
+        np.loadtxt("Coordinates.csv")
+        #
+        # read values from csv
         tomato_found=False
-        # image capture and tomato detection
-        print()
-        print("Running Image Detection")
-        #run image detection
-
-        #Capture Image from camera
-        ########################################################
-
-        ImgName="realsense.jpg" #set name for image export
-
-        print("Capturing Image")
-        img =real.capture_image(30,True,ImgName,ImgFolder)#run image capture function for Intel Realsense
-
-        #run detection
-        #######################################################
-        print("Running MASK Rcnn")
-        results = model.detect([img], verbose=0) #maskrcnn model detection
-        #pull masks from detection results
-        r = results[0]
-        #isolate the mask data from the detection results
-        myMask=r['masks']
-        NumTomato=myMask.shape[2]
-
-        #export the masks of tomatoes found during detection
-        #######################################################
-        Export_Masks(mask_export_location,myMask) #code for exporting mask data if needed
-
-        # ripeness detection
-        print("Detecting Ripeness")
-        print()
-        print()
-        count=0
-
-        Ripe=[False for x in range(NumTomato)] #preinitialize array for all tomatos in scene
-
-        for i in range(0, NumTomato):
-
-            output=ripeness(ImgName,ImgFolder,myMask[:,:,i]) #detect ripeness on ith tomato
-            Ripe[i]=output
-            print("Tomato ",i, " is ripe: ", Ripe[i])
-            count+=1
-
-
-
-        for i in range(0, NumTomato): #loop through tomatoes and set first ripe tomato as harvest target
-            if Ripe[i]==True:
-                harvest_target=i
-                Ripe_Tomato=True
-                break
-        if(harvest_target==-1):#if no tomatoes are ripe
-            print("No Valid Harvest Target")
-        else:
-            print("Harvest Target Is Tomato: ", harvest_target)
-
-        # ellipse fitting and cartesian location detection
-        if harvest_target==-1:
-            print("No Valid Harvest Target")
-
-        else:
-
-            print("Getting Mask Edges")
-            print()
-            print()
-
-            numx=len(myMask) #determine the resolution of the image
-            # print(numx)
-            numy=len(myMask[0])
-            # print(numy)
-
-
-
-            # edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
-
-
-            mask_in=(myMask[:,:,harvest_target])#set the submask as the mask of the harvest target
-
-            xpix , ypix =GetEdges(mask_in) #run get edge function to get a mask of only edges of the tomato
-            xpix=matlab.double(xpix.tolist()) #change xpix and ypix into terms matlab understands
-            ypix=matlab.double(ypix.tolist())
-
-            print("Running Fit_Ellipse")#run ellipse fitting function in matlab engine
-            [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line]=eng.fit_ellipse(xpix,ypix,nargout=12)
-            rotated_ellipse=np.asarray(rotated_ellipse) #convert variable type back to python typing
-            print("Ellipse Parameters Found")
-
-
-            print("Detecting Tomato Location...") #determine the centerpoint of the fit ellipse
-            centerX=round(statistics.mean(rotated_ellipse[1,:]))
-            centerY=round(statistics.mean(rotated_ellipse[0,:]))
-
-
-            depth_intrin, depth = real.get_depth_intrin(centerX,centerY) #get depth data from camera
-            depth_point = rs.rs2_deproject_pixel_to_point(depth_intrin, [centerX,centerY], depth) #deproject depth data into cartesian data
-
-            #TODO need to offset for center of tomato, currently at front of tomato
-            print("Location of Center Point In Camera Frame:")
-            print("X: ",depth_point[0],"Y: ",depth_point[1],"Z: ", depth_point[2])
-            print()
-
-            cx,cy=calibratecamera(depth_point[0],depth_point[1],depth_point[2]) #push depth data through calibration function
-            cz=depth_point[2]
-
-            print("Location of Calibrated Center Point In Camera Frame:")
-            print("cX: ",cx,"cY: ",cy,"cZ: ", cz)
-            print()
-
-            print("Performing Transformation From Position ", Camera_Location)
-            ax,ay,az=rotateaboutX(cx,cy,cz,Camera_Location)#Transform about x axis to move point data to arm origin
-
-            RobotShiftX=0.01145 -0.01
-            RobotShiftY=(-(0.01221+0.1269) +0.025)
-            RobotShiftZ=-0.016
-
-            #fix shift to robotic origin
-            ax=ax+RobotShiftX
-            ay=ay+RobotShiftY
-            az=az+RobotShiftZ
-
-            print("Location of Center Point In Robot Frame:")
-            print("X: ",ax,"Y: ",ay,"Z: ",az )
-            print()
-        # image verification
-        if harvest_target==-1:
-            print("No Valid Harvest Target")
-
-        else:
-            print("Running Image Verification")
-            print()
-            print()
-
-            # image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #convert pixels from bgr to rgb
-            implot = plt.imshow(img)#plot image
-
-            # put a blue dot at (10, 20)
-            center=plt.scatter(centerX,centerY,5,label='Center Point') #plot center point of ellipse
-            # center.set_label('Tomatoe Center Point"')
-            ellipse=plt.scatter(rotated_ellipse[1,:],rotated_ellipse[0,:],5,label='Fit Ellipse')#plot ellipse
-            plt.legend(handles=[center, ellipse])#plot legends
-            plt.show(block=False)
-
-            plt.pause(5)#pause to hold plot open
-            plt.close()
-
-        #get values
-        if(harvest_target!=-1):
-            tomato_found = True
         geometry = Pose()
         geometry.position.x = ax
         geometry.position.y = ay
@@ -321,6 +49,7 @@ def sense_callback(data):
         pub_sense.publish(Bool(False))
         rate.sleep()
 
+# need to change to an async spin for reasons?
 def sense_node():
     rospy.init_node('sense_node',anonymous=True)
     rospy.Subscriber('sensing_node_input',Bool,sense_callback)
