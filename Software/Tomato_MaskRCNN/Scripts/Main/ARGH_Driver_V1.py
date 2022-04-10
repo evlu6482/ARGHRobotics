@@ -63,6 +63,7 @@ real=DepthCamera()
 model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
 ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
 mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+coord_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Coordinate_Exports"
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
@@ -76,8 +77,8 @@ sys.path.append(ROOT_DIR)  # To find local version of the library
 #import and setup MaskRcnn Config 
 # Directory to save logs and trained model
 
-from config import Config
-import model as modellib
+from mrcnn.config import Config
+import mrcnn.model as modellib
 
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
@@ -239,58 +240,86 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             numy=len(myMask[0])
             # print(numy)
             
-
-
+            CoordSet=numpy.zeros((3,NumTomato))
+            Ellipseset=numpy.zeros((2,100,NumTomato))
             # edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
 
-            
-            mask_in=(myMask[:,:,harvest_target])#set the submask as the mask of the harvest target
-            
-            xpix , ypix =GetEdges(mask_in) #run get edge function to get a mask of only edges of the tomato
-            xpix=matlab.double(xpix.tolist()) #change xpix and ypix into terms matlab understands
-            ypix=matlab.double(ypix.tolist())
-
-            print("Running Fit_Ellipse")#run ellipse fitting function in matlab engine
-            [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line]=eng.fit_ellipse(xpix,ypix,nargout=12)
-            rotated_ellipse=np.asarray(rotated_ellipse) #convert variable type back to python typing
-            print("Ellipse Parameters Found")
+            for i in range(0,NumTomato):
 
 
-            print("Detecting Tomato Location...") #determine the centerpoint of the fit ellipse
-            centerX=round(statistics.mean(rotated_ellipse[1,:]))
-            centerY=round(statistics.mean(rotated_ellipse[0,:]))
-
-            
-            depth_intrin, depth = real.get_depth_intrin(centerX,centerY) #get depth data from camera
-            depth_point = rs.rs2_deproject_pixel_to_point(depth_intrin, [centerX,centerY], depth) #deproject depth data into cartesian data
-
-            #TODO need to offset for center of tomato, currently at front of tomato
-            print("Location of Center Point In Camera Frame:")
-            print("X: ",depth_point[0],"Y: ",depth_point[1],"Z: ", depth_point[2])
-            print()
-
-            cx,cy=calibratecamera(depth_point[0],depth_point[1],depth_point[2]) #push depth data through calibration function 
-            cz=depth_point[2]
-
-            print("Location of Calibrated Center Point In Camera Frame:")
-            print("cX: ",cx,"cY: ",cy,"cZ: ", cz)
-            print()
+                mask_in=(myMask[:,:,i])#set the submask as the mask of the harvest target
                 
-            print("Performing Transformation From Position ", Camera_Location)
-            ax,ay,az=rotateaboutX(cx,cy,cz,Camera_Location)#Transform about x axis to move point data to arm origin
+                xpix , ypix =GetEdges(mask_in) #run get edge function to get a mask of only edges of the tomato
+                xpix=matlab.double(xpix.tolist()) #change xpix and ypix into terms matlab understands
+                ypix=matlab.double(ypix.tolist())
 
-            RobotShiftX=0.01145 -0.01
-            RobotShiftY=(-(0.01221+0.1269) +0.025)
-            RobotShiftZ=-0.016
+                print("Running Fit_Ellipse")#run ellipse fitting function in matlab engine
+                [a,b,orientation_rad,X0,Y0,X0_in,Y0_in,long_axis,short_axis,rotated_ellipse,new_ver_line,new_horz_line]=eng.fit_ellipse(xpix,ypix,nargout=12)
+                rotated_ellipse=np.asarray(rotated_ellipse) #convert variable type back to python typing
+                print("Ellipse Parameters Found")
+                Ellipseset[:,:,i]=rotated_ellipse
 
-            #fix shift to robotic origin
-            ax=ax+RobotShiftX
-            ay=ay+RobotShiftY
-            az=az+RobotShiftZ
+                print("Detecting Tomato Location...") #determine the centerpoint of the fit ellipse
+                centerX=round(statistics.mean(rotated_ellipse[1,:]))
+                centerY=round(statistics.mean(rotated_ellipse[0,:]))
 
-            print("Location of Center Point In Robot Frame:")
-            print("X: ",ax,"Y: ",ay,"Z: ",az )
-            print()
+                
+                depth_intrin, depth = real.get_depth_intrin(centerX,centerY) #get depth data from camera
+                depth_point = rs.rs2_deproject_pixel_to_point(depth_intrin, [centerX,centerY], depth) #deproject depth data into cartesian data
+
+                #TODO need to offset for center of tomato, currently at front of tomato
+                # print("Location of Center Point In Camera Frame:")
+                # print("X: ",depth_point[0],"Y: ",depth_point[1],"Z: ", depth_point[2])
+                # print()
+
+                cx,cy=calibratecamera(depth_point[0],depth_point[1],depth_point[2]) #push depth data through calibration function 
+                cz=depth_point[2]
+
+                # print("Location of Calibrated Center Point In Camera Frame:")
+                # print("cX: ",cx,"cY: ",cy,"cZ: ", cz)
+                # print()
+                    
+                print("Performing Transformation From Position ", Camera_Location)
+                ax,ay,az=rotateaboutX(cx,cy,cz,Camera_Location)#Transform about x axis to move point data to arm origin
+
+                RobotShiftX=0.01145 -0.01
+                RobotShiftY=(-(0.01221+0.1269) +0.025)
+                RobotShiftZ=-0.016
+
+                #fix shift to robotic origin
+                ax=ax+RobotShiftX
+                ay=ay+RobotShiftY
+                az=az+RobotShiftZ
+
+                print("Location of Center Point In Robot Frame:")
+                print("X: ",ax,"Y: ",ay,"Z: ",az )
+                print()
+
+                CoordSet[:,i]=[ax,ay,az]
+
+
+            if NumTomato==2:
+                if(CoordSet[1,1] < CoordSet[1,0] and Ripe[1]):
+                    harvest_target=1
+
+            elif NumTomato>2:
+                
+                for i in range(0,NumTomato):
+                   
+                    if CoordSet[1,i]< CoordSet[1,harvest_target] and Ripe[i] :
+                        harvest_target=i 
+                        
+
+            
+            
+            print("harvest_target is",i)
+
+            os.chdir(coord_export_location)    
+            for f in os.listdir(coord_export_location):
+                os.remove(os.path.join(coord_export_location, f))
+            
+            coord_export=numpy.asarray([ax,ay,az])
+            numpy.savetxt("Coordinates.csv", coord_export, delimiter=",")
 
         Case="4"
     elif(Case=="4"): #image verification
@@ -301,7 +330,10 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             print("Running Image Verification")
             print()
             print() 
-
+            
+            rotated_ellipse=Ellipseset[:,:,harvest_target]
+            centerX=round(statistics.mean(rotated_ellipse[1,:]))
+            centerY=round(statistics.mean(rotated_ellipse[0,:]))
             # image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #convert pixels from bgr to rgb
             implot = plt.imshow(img)#plot image
 
@@ -319,10 +351,11 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
     elif(Case=="5"):#set location for camera sensing position
         find_Location=True
         while(find_Location==True):
-            print("Enter New Camera Location: A, B, or C: ")
-            print()
-            print() 
-            Camera_Location=input()
+            # print("Enter New Camera Location: A, B, or C: ")
+            # print()
+            # print() 
+            # Camera_Location=input()
+            Camera_Location="B"
             
             if(Camera_Location=="A" or Camera_Location=="a"):
                 Camera_Location=Camera_Location.upper()
