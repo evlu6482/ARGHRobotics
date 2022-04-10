@@ -118,8 +118,8 @@ class DepthCamera:
                 img=cv2.cvtColor(color_frame,cv2.COLOR_RGB2BGR)
                 img=color_frame
                 if Save_Img:
-                    dispimg=Image.fromarray(img)
-                    dispimg.show()
+                    # dispimg=Image.fromarray(img)
+                    # dispimg.show()
                     img_save= Image.fromarray(img)
                     img_save.save(Img_Name)
         
@@ -226,8 +226,8 @@ def ripeness(Img_Name:str,ImgFolder,mask):
 #      end  
 #    end
 # end
-    dispimg=Image.fromarray(singleTomato,'RGB')
-    dispimg.show()
+    # dispimg=Image.fromarray(singleTomato,'RGB')
+    # dispimg.show()
     for x in range(numx):
         for y in range(numy):
             # print(x," ",y)
