@@ -64,6 +64,12 @@ model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRC
 ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
 mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 coord_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Coordinate_Exports"
+Camera_Location_Path=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Camera_Location"
+#delete contents of coordinate export folder
+os.chdir(coord_export_location)    
+for f in os.listdir(coord_export_location):
+    os.remove(os.path.join(coord_export_location, f))
+
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./../")
@@ -314,10 +320,9 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             
             print("harvest_target is",i)
 
-            os.chdir(coord_export_location)    
-            for f in os.listdir(coord_export_location):
-                os.remove(os.path.join(coord_export_location, f))
             
+            #export coordinates as a csv file
+            os.chdir(coord_export_location)  
             coord_export=numpy.asarray([ax,ay,az])
             numpy.savetxt("Coordinates.csv", coord_export, delimiter=",")
 
@@ -349,31 +354,29 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
         Case="0"
         
     elif(Case=="5"):#set location for camera sensing position
-        find_Location=True
-        while(find_Location==True):
-            # print("Enter New Camera Location: A, B, or C: ")
-            # print()
-            # print() 
-            # Camera_Location=input()
-            Camera_Location="B"
+        
+        # print("Enter New Camera Location: A, B, or C: ")
+        # print()
+        # print() 
+        # Camera_Location=input()
+        os.chdir(coord_export_location)  
+        Camera_Location = np.loadtxt("Camera_Location", dtype=int)
+        
+        if(Camera_Location==1):
+            Camera_Location="A"
+            print("Camera Located At Position ", Camera_Location)
+            print()
             
-            if(Camera_Location=="A" or Camera_Location=="a"):
-                Camera_Location=Camera_Location.upper()
-                print("Camera Located At Position ", Camera_Location)
-                print()
-                find_Location=False
-            elif(Camera_Location=="B"or Camera_Location=="b"):
-                Camera_Location=Camera_Location.upper()
-                print("Camera Located At Position ", Camera_Location)
-                print()
-                find_Location=False
-            elif(Camera_Location=="C"or Camera_Location=="c"):
-                Camera_Location=Camera_Location.upper()
-                print("Camera Located At Position ", Camera_Location)
-                print()
-                find_Location=False
-            else:
-                print("Incorrect Input, enter Either A, B, or C")
+        elif(Camera_Location==2):
+            Camera_Location="B"
+            print("Camera Located At Position ", Camera_Location)
+            print()
+            
+        elif(Camera_Location==3):
+            Camera_Location="C"
+            print("Camera Located At Position ", Camera_Location)
+            print()
+            
 
         Case="1"
         
