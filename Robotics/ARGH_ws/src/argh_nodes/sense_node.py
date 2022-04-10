@@ -13,15 +13,15 @@ pub_geom = rospy.Publisher('coordinate_tomato',Pose, queue_size = 10)
 Camera_Location = 1
 script_location = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Scripts/Main"
 coord_file = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports/Coordinates.csv"
+camera_file = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Camera_Location/Camera_Location.csv"
 
 def sense_callback(data):
     rate = rospy.Rate(2)
     if(data.data==True):
         #RUN SCRIPT
         rospy.loginfo("Beginning Sensing")
-
         # create csv with camera location
-        np
+        np.savetxt(camera_file,Camera_Location,delimiter=",")
         # write Camera_Location to text file
         os.path.join(script_location)
         os.system("conda run -n maskrcnn python -Wignore ARGH_Driver_V1.py")
