@@ -56,6 +56,7 @@ import matlab.engine
 eng = matlab.engine.start_matlab()
 real=DepthCamera()
 # set paths for project
+<<<<<<< HEAD
 model_path = "/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
 ImgFolder="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
 mask_export_location="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
@@ -68,6 +69,19 @@ Camera_Location_Path="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_Mas
 # mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
 # coord_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Coordinate_Exports"
 # Camera_Location_Path=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Camera_Location"
+=======
+# model_path = "/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
+# ImgFolder="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
+# mask_export_location="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
+# coord_export_location="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Coordinate_Exports"
+# Camera_Location_Path="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Camera_Location"
+
+model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+coord_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Coordinate_Exports"
+Camera_Location_Path=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Camera_Location"
+>>>>>>> Node_Combine_Branch
 #delete contents of coordinate export folder
 os.chdir(coord_export_location)    
 for f in os.listdir(coord_export_location):
@@ -249,7 +263,7 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             numy=len(myMask[0])
             # print(numy)
             
-            CoordSet=numpy.zeros((3,NumTomato))
+            CoordSet=numpy.zeros((NumTomato,3))
             Ellipseset=numpy.zeros((2,100,NumTomato))
             # edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
 
@@ -304,29 +318,30 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
                 print("X: ",ax,"Y: ",ay,"Z: ",az )
                 print()
 
-                CoordSet[:,i]=[ax,ay,az]
+                CoordSet[i,:]=[ax,ay,az]
 
 
             if NumTomato==2:
-                if(CoordSet[1,1] < CoordSet[1,0] and Ripe[1]):
+                if(CoordSet[1,1] < CoordSet[0,1] and Ripe[1]):
                     harvest_target=1
-
+                else:
+                    harvest_target=0
             elif NumTomato>2:
                 
                 for i in range(0,NumTomato):
-                   
-                    if CoordSet[1,i]< CoordSet[1,harvest_target] and Ripe[i] :
+                    
+                    if CoordSet[i,1]< CoordSet[harvest_target,1] and Ripe[i] :
                         harvest_target=i 
                         
 
             
             
-            print("harvest_target is",i)
+            print("harvest_target is",harvest_target)
 
             
             #export coordinates as a csv file
             os.chdir(coord_export_location)  
-            coord_export=numpy.asarray([ax,ay,az])
+            coord_export=numpy.asarray(CoordSet[harvest_target,:])
             numpy.savetxt("Coordinates.csv", coord_export, delimiter=",")
 
         Case="4"
@@ -363,7 +378,11 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
         # print() 
         # Camera_Location=input()
         os.chdir(Camera_Location_Path)  
+<<<<<<< HEAD
         Camera_Location = np.loadtxt("Camera_Location.csv")
+=======
+        Camera_Location = np.loadtxt("Camera_Location.csv"      )
+>>>>>>> Node_Combine_Branch
         
         if(Camera_Location==1):
             Camera_Location="A"
