@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/move_node.dir/move_node.cpp.o"
-  "/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/move_node.pdb"
-  "/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/move_node"
+  "/home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/move_node.pdb"
+  "/home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/devel/lib/argh_nodes/move_node"
 )
 
 # Per-language clean rules from dependency scanning.

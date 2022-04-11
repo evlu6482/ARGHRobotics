@@ -363,7 +363,7 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
         # print() 
         # Camera_Location=input()
         os.chdir(Camera_Location_Path)  
-        Camera_Location = np.loadtxt("Camera_Location.csv", dtype=int)
+        Camera_Location = np.loadtxt("Camera_Location.csv")
         
         if(Camera_Location==1):
             Camera_Location="A"

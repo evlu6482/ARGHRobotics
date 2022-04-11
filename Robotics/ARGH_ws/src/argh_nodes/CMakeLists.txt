@@ -12,7 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
 roscpp 
 rospy 
 moveit_ros_planning 
-moveit_ros_planning_interface 
+moveit_ros_planning_interface
+moveit_ros_move_group
 moveit_core
 geometry_msgs 
 std_msgs

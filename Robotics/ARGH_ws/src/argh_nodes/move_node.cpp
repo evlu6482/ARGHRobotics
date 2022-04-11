@@ -11,7 +11,6 @@ References
 	https://roboticscasual.com/ros-tutorial-pick-and-place-task-with-the-moveit-c-interface/
 */
 
-
 #include <ros/ros.h>
 
 //for subscring to boolean passed from sensing node
@@ -74,7 +73,7 @@ const std::vector<double> third_pos_tcp{-0.2547, 0.25562 , 0.174};
 
 	Author: Connor O'Reilly
 	Company: ARGH Robotics
-	Last Edited: 04/03/2022
+	Last Edited: 04/08/2022
 	Email: coor1752@colorado.edu
 */
 
@@ -94,6 +93,8 @@ public:
     //publishing command to gripper control
     pub_3 = n_.advertise<std_msgs::String>("control_gripper", 1000);
     
+    pub_4 = n_.advertise<std_msgs::Bool>("sensing_node_input", 1000);
+
     //subscribing to the boolean passed from the sensing node to tell whether we move or not 
     sub_1 = n_.subscribe("sensing_node_boolean_move", 1000, &MoveSensor::MoveSensor_callback, this);
   
@@ -112,7 +113,7 @@ public:
     std_msgs::Int32 sensor_position; //integer for sensor position
     std_msgs::Bool move_the_sensor_bool; //boolean to stop computations in this node
     std_msgs::String control_gripper; //string to tell the gripper what to do
-
+    std_msgs::Bool tell_sense_to_go;
     if(input.data == true){
     	
     	//insantiate plan group
@@ -147,7 +148,7 @@ public:
   		move_group_interface_arm.move();
 
   		//open gripper before moving to first position
-  		control_gripper.data = "open";
+  		control_gripper.data = "open_fast_hard";
   		pub_3.publish(control_gripper);
     	rate.sleep();
 
@@ -157,20 +158,15 @@ public:
     			//if current position is equal to one move sensor to position two
     			ROS_INFO_STREAM("Moving Sensor from position 1 -> 2..."); //inform  user we are moving the sensor
     			
-
-
     			//move to position 1 from home
     			move_group_interface_arm.setJointValueTarget(first_pos);
     			move_group_interface_arm.move();
 
 			    move_group_interface_arm.setPathConstraints(test_constraints);
 
-
-
-
     			//position 1 has been reached
     			//close the gripper and grasp sensor mount
-    			control_gripper.data = "close";
+    			control_gripper.data = "close_fast_hard";
     			pub_3.publish(control_gripper);
     			rate.sleep();
     			//move to position 2
@@ -192,7 +188,7 @@ public:
     			move_group_interface_arm.execute(goal_plan);
     			rate.sleep();
     			//open gripper
-    			control_gripper.data = "open";
+    			control_gripper.data = "open_fast_hard";
     			pub_3.publish(control_gripper);
     			rate.sleep();
 
@@ -219,7 +215,7 @@ public:
 
     			//position 2 has been reached
     			//close the gripper and grasp sensor mount
-    			control_gripper.data = "close";
+    			control_gripper.data = "close_fast_hard";
     			pub_3.publish(control_gripper);
     			rate.sleep();
     			//move to position 2
@@ -240,16 +236,17 @@ public:
     			move_group_interface_arm.execute(goal_plan);
     			rate.sleep();
     			//open gripper
-    			control_gripper.data = "open";
+    			control_gripper.data = "open_fast_hard";
     			pub_3.publish(control_gripper);
     			rate.sleep();
 
     			//clear path constraints
     			move_group_interface_arm.clearPathConstraints();
+    			
     			//after gripper is open reaturn to the home position
     			move_group_interface_arm.setJointValueTarget(home_pos);
     			move_group_interface_arm.move();
-
+    			rate.sleep();
     			//inform to user 
     			ROS_INFO_STREAM("Sensor moved from position: TWO to position: THREE");
     			current_sensor_position = 3; //update sensor position 
@@ -270,7 +267,7 @@ public:
 
     			//position 1 has been reached
     			//close the gripper and grasp sensor mount
-    			control_gripper.data = "close";
+    			control_gripper.data = "close_fast_hard";
     			rate.sleep();
     			pub_3.publish(control_gripper);
     			rate.sleep();
@@ -292,7 +289,7 @@ public:
     			move_group_interface_arm.execute(goal_plan);
     			rate.sleep();
     			//open gripper
-    			control_gripper.data = "open";
+    			control_gripper.data = "open_fast_hard";
     			pub_3.publish(control_gripper);
     			rate.sleep();
 
@@ -304,7 +301,7 @@ public:
 
     			//inform to user 
     			ROS_INFO_STREAM("Sensor moved from position: THREE to position: ONE");
-    			current_sensor_position = 2; //update sensor position 
+    			current_sensor_position = 1; //update sensor position 
     			break;
 			default:
 				ROS_FATAL_STREAM("This switch case in MoveSensor_callback should not be reached");
@@ -315,13 +312,16 @@ public:
 
     	//publish current sensor location so other nodes are in the loop, lmaoooo
     	sensor_position.data = current_sensor_position;
-    	rate.sleep();
     	pub_1.publish(sensor_position);
-
+    	rate.sleep();
     	//reset message so node does not continue to move sensor or update sensor position
     	move_the_sensor_bool.data = false;
-    	rate.sleep();
     	pub_2.publish(move_the_sensor_bool);
+    	rate.sleep();
+
+    	tell_sense_to_go.data = true;
+    	pub_4.publish(tell_sense_to_go);
+    	rate.sleep();
 
     }
 
@@ -332,6 +332,7 @@ private:
   ros::Publisher pub_1;
   ros::Publisher pub_2;
   ros::Publisher pub_3;
+  ros::Publisher pub_4;
   ros::Subscriber sub_1;
 
 };//End of class MoveSensor

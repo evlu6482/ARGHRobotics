@@ -1,4 +1,4 @@
-prefix=/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel
+prefix=/home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/devel
 
 Name: ur_gazebo
 Description: Description of ur_gazebo
