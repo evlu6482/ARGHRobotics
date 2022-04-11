@@ -242,7 +242,7 @@ public:
 
     			//clear path constraints
     			move_group_interface_arm.clearPathConstraints();
-    			
+
     			//after gripper is open reaturn to the home position
     			move_group_interface_arm.setJointValueTarget(home_pos);
     			move_group_interface_arm.move();
