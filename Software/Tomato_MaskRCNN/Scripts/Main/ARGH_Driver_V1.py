@@ -56,15 +56,18 @@ import matlab.engine
 eng = matlab.engine.start_matlab()
 real=DepthCamera()
 # set paths for project
-# model_path = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
-# ImgFolder="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
-# mask_export_location="/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
+model_path = "/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
+ImgFolder="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
+mask_export_location="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports"
+coord_export_location="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Coordinate_Exports"
+Camera_Location_Path="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Camera_Location"
 
-model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
-ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
-mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
-coord_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Coordinate_Exports"
-Camera_Location_Path=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Camera_Location"
+
+# model_path = r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Models\mask_rcnn_tomato.h5"
+# ImgFolder=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Image_Exports"
+# mask_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Mask_Exports"
+# coord_export_location=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Coordinate_Exports"
+# Camera_Location_Path=r"C:\Users\crasb\Documents\ARGH\ARGHRobotics\Software\Tomato_MaskRCNN\Camera_Location"
 #delete contents of coordinate export folder
 os.chdir(coord_export_location)    
 for f in os.listdir(coord_export_location):
@@ -359,8 +362,8 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
         # print()
         # print() 
         # Camera_Location=input()
-        os.chdir(coord_export_location)  
-        Camera_Location = np.loadtxt("Camera_Location", dtype=int)
+        os.chdir(Camera_Location_Path)  
+        Camera_Location = np.loadtxt("Camera_Location.csv", dtype=int)
         
         if(Camera_Location==1):
             Camera_Location="A"
