@@ -164,10 +164,10 @@ int main(int argc, char **argv){
 	/**********************************************************/
 	//used for debugging 
 	//creating publisher object to pass boolean value to start move_node
-	ros::Publisher pub2 = nh.advertise<std_msgs::Bool>("sensing_node_boolean_move", 1000);
-	std_msgs::Bool blah;
+	//ros::Publisher pub2 = nh.advertise<std_msgs::Bool>("sensing_node_boolean_move", 1000);
+	//std_msgs::Bool blah;
 
-	blah.data = true;
+	//blah.data = true;
 	/**********************************************************/
 
 	//initalizing user input variabl
@@ -189,16 +189,16 @@ int main(int argc, char **argv){
 	std::cin.ignore();//take any key enter 
 
 	//publish true message to start sensing node 
-	//std_msgs::Bool msg_to_sensor;
-	//msg_to_sensor.data = true; //hopefully this begins the sensor node
+	std_msgs::Bool msg_to_sensor;
+	msg_to_sensor.data = true; //hopefully this begins the sensor node
 	
 	//publish on "sensing_node_input" topic
 	
-	//pub.publish(msg_to_sensor);
-	//rate.sleep();
-	//%%%%%%%%%%%%% 
-	pub2.publish(blah);
+	pub.publish(msg_to_sensor);
 	rate.sleep();
+	//%%%%%%%%%%%%% 
+	//pub2.publish(blah);
+	//rate.sleep();
 	//used for debugging move node can delete
 	//%%%%%%%%%%%%%
 

@@ -17,6 +17,7 @@ moveit_ros_move_group
 moveit_core
 geometry_msgs 
 std_msgs
+tf
 )
 
 ## System dependencies are found with CMake's conventions
