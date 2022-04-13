@@ -382,7 +382,7 @@ def rotateaboutX(X,Y,Z,P):
     V=np.array([X,Y,Z])
     tx,ty,tz=a.dot(V)
     if P == "A":
-        ShiftX = 0.368 - 0.032 # -------------------- Shift in arm x-direction a position A [m] (31.2 cm right of center)
+        ShiftX = 0.368 - 0.032 -0.01 # -------------------- Shift in arm x-direction a position A [m] (31.2 cm right of center)
     elif P == "B":
         ShiftX = 0.057 - 0.032# ---------------------------- Shift in arm x-direction a position B [m]
     elif P == "C":

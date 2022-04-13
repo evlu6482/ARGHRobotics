@@ -46,6 +46,8 @@ def sense_callback(data):
             else:
                 Camera_Location[0]=Camera_Location[0]+1
             rate.sleep()
+            
+
             rospy.loginfo("No tomato found, moving sensor position")
         pub_sense.publish(Bool(False))
         rate.sleep()

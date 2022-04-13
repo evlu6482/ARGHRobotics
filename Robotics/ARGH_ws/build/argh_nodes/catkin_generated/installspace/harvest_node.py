@@ -127,6 +127,7 @@ def harvest_tomatos(data):
 
 			wpose = group.get_current_pose().pose
 			wpose.position.y += 0.03
+			start_y = wpose.position.y
 			wpose.position.x = data.position.x
 			wpose.position.z = data.position.z + saftey_height + adding_to_height
 			waypoints.append(copy.deepcopy(wpose))
@@ -153,6 +154,8 @@ def harvest_tomatos(data):
 			wpose.position.z -= saftey_height 
 			waypoints.append(copy.deepcopy(wpose))
 
+			wpose.position.y = start_y
+			waypoints.append(copy.deepcopy(wpose))
 
 			(plan, fraction) = group.compute_cartesian_path(waypoints,0.01,0.0)
 			group.execute(plan, wait=True)
