@@ -48,12 +48,12 @@ static const std::string PLANNING_GROUP_ARM = "manipulator";
 //storing joint positions for positions home -> 1 -> 2 -> 3 
 //elements go by shoulder_pan, shoulder_lift, elbow_joint, wrist_1, wrist_2, wrist_3
 const std::vector<double> home_pos{5.96377277374, -0.5757077497, -2.556312084197, -3.14978327373, -0.3186467329608,  3.139601707458496};
-const std::vector<double> first_pos{4.159873008728027, -1.952275892297262, -2.169930934906006, -3.856384655038351, -1.4991801420794886, 2.637144088745117};
+const std::vector<double> first_pos{4.1757049560546875, -1.9448801479735316, -2.182875156402588, -3.8517877064146937, -1.5011804739581507, 2.652855634689331};
 const std::vector<double> second_pos{5.128342628479, -1.71154989818715, -2.543005466461, -3.7090360126891078, -1.6590359846698206, 3.584813117980957};
 const std::vector<double> third_pos{5.951443672180176, -1.8237282238402308, -2.34622882041931152, -3.725156923333639, -1.7076171080218714, 4.421555519104004};
 
 //storing tcp positions relative to base for positions 1 -> 3
-const std::vector<double> first_pos_tcp{0.37202, 0.25562 , 0.174};
+const std::vector<double> first_pos_tcp{0.36415, 0.25561 , 0.174};
 const std::vector<double> second_pos_tcp{0.0663, 0.25562 , 0.174};
 const std::vector<double> third_pos_tcp{-0.2547, 0.25562 , 0.174};
 
@@ -318,6 +318,11 @@ public:
     	move_the_sensor_bool.data = false;
     	pub_2.publish(move_the_sensor_bool);
     	rate.sleep();
+
+    	control_gripper.data = "start";
+    	pub_3.publish(control_gripper);
+    	rate.sleep();
+    	
 
     	tell_sense_to_go.data = true;
     	pub_4.publish(tell_sense_to_go);

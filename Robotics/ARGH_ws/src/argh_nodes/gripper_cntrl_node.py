@@ -28,7 +28,7 @@ def grip_some_tomatos(data):
   if(data.data == 'start'):                                  
     formatted = '091003E800030601000000000072E1'.decode('hex')
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-  s.connect((host,port))
+  s.connect((host,port)) 
   s.sendall(formatted)  
   data = s.recv(1024)   
   s.close 

@@ -161,6 +161,8 @@ int main(int argc, char **argv){
 	//creating publisher object for starting sensing node
 	ros::Publisher pub = nh.advertise<std_msgs::Bool>("sensing_node_input", 1000);
 
+	//creating publisher to start gripper
+	ros::Publisher pub_grip = nh.advertise<std_msgs::String>("control_gripper", 1000);
 	/**********************************************************/
 	//used for debugging 
 	//creating publisher object to pass boolean value to start move_node
@@ -192,10 +194,13 @@ int main(int argc, char **argv){
 	std_msgs::Bool msg_to_sensor;
 	msg_to_sensor.data = true; //hopefully this begins the sensor node
 	
+	std_msgs::String msg_to_gripper;
+	msg_to_gripper.data = "start";
 	//publish on "sensing_node_input" topic
 	
 	pub.publish(msg_to_sensor);
 	rate.sleep();
+	pub_grip.publish(msg_to_gripper);
 	//%%%%%%%%%%%%% 
 	//pub2.publish(blah);
 	//rate.sleep();
