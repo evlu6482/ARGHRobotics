@@ -55,6 +55,31 @@ from definitions import *
 import matlab.engine
 eng = matlab.engine.start_matlab()
 real=DepthCamera()
+
+
+#Bot Logging Sutff
+from Slack_Bot.Slack_Bot_Def import * 
+
+from datetime import datetime
+
+Bot= Slack_Bot()
+now = datetime.now()
+date=datetime.today()
+
+todaysdate=date.strftime("%d/%m/%Y")
+current_time = now.strftime("%H:%M:%S")
+timeprint=todaysdate+ "  :  " + current_time
+Buffertext= "------------------------------------------------------------"
+
+Bot.push_message(Buffertext)
+Bot.push_message(Buffertext)
+
+Bot.push_message("Starting Sensing Session: "+ timeprint)
+
+
+
+
+
 # set paths for project
 # model_path = "/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Models/mask_rcnn_tomato.h5"
 # ImgFolder="/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Image_Exports"
@@ -209,12 +234,15 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
         print() 
         print()
         count=0
-        
+        numPixelTomato=numpy.zeros(NumTomato)
+        numPixelRed=numpy.zeros(NumTomato)
+        ripenessRatio=numpy.zeros(NumTomato)
+
         Ripe=[False for x in range(NumTomato)] #preinitialize array for all tomatos in scene
         
         for i in range(0, NumTomato):
             
-            output=ripeness(ImgName,ImgFolder,myMask[:,:,i]) #detect ripeness on ith tomato
+            output,numPixelTomato[i],numPixelRed[i],ripenessRatio[i]=ripeness(ImgName,ImgFolder,myMask[:,:,i]) #detect ripeness on ith tomato
             Ripe[i]=output
             print("Tomato ",i, " is ripe: ", Ripe[i])
             count+=1
@@ -232,6 +260,14 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             print("Harvest Target Is Tomato: ", harvest_target)
 
         Case="3"
+        Bot.push_message("++++++++++++++++++++++++")
+        Bot.push_message("Total Tomato Pixels: " + str(numPixelTomato[harvest_target]))
+        Bot.push_message("Red pixels: " + str(numPixelRed[harvest_target]))
+        Bot.push_message("Ripeness Ratio: "+str(ripenessRatio[harvest_target]))
+        Bot.push_message("++++++++++++++++++++++++")
+
+
+
 
     elif(Case=="3"):#ellipse fitting and cartesian location detection
         if harvest_target==-1:
@@ -250,6 +286,7 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             
             CoordSet=numpy.zeros((NumTomato,3))
             Ellipseset=numpy.zeros((2,100,NumTomato))
+            Radius=numpy.zeros((NumTomato))
             # edgeMasks = [[[0 for x in range(numx)] for y in range(numy)] for z in range(NumTomato)]
 
             for i in range(0,NumTomato):
@@ -305,6 +342,23 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
 
                 CoordSet[i,:]=[ax,ay,az]
 
+                ###################################################
+                #diameter calculations
+                calPix=centerX+10#add 10 pixels for calibration
+
+                print("calibration pixel",calPix)
+                print("Center Pixel",centerX)
+
+                depth_intrin, depth = real.get_depth_intrin(calPix,centerY) #get depth data from camera
+                radius_pt = rs.rs2_deproject_pixel_to_point(depth_intrin, [calPix,centerY], depth) #deproject depth data into cartesian data
+                rx,ry=calibratecamera(radius_pt[0],radius_pt[1],radius_pt[2])
+                pixeltoM=abs(rx-cx)/10
+
+                Radius[i]= pixeltoM*long_axis
+                print(rx,":",cx)
+                print("pixeltoM",pixeltoM)
+                print("long_axis",long_axis)
+                print("Tomato Radius",Radius[i])
 
             if NumTomato==2:
                 if(CoordSet[1,1] < CoordSet[0,1] and Ripe[1]):
@@ -322,7 +376,7 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             
             
             print("harvest_target is",harvest_target)
-
+            Bot.push_message("Harvesting Tomato at X: "+ str(CoordSet[harvest_target,0])+", Y: "+str(CoordSet[harvest_target,1])+", Z: "+str(CoordSet[harvest_target,0]))
             
             #export coordinates as a csv file
             os.chdir(coord_export_location)  
@@ -350,10 +404,16 @@ while(Run==TRUE): #code is currently setup so that it is not interactable, comme
             # center.set_label('Tomatoe Center Point"')
             ellipse=plt.scatter(rotated_ellipse[1,:],rotated_ellipse[0,:],5,label='Fit Ellipse')#plot ellipse
             plt.legend(handles=[center, ellipse])#plot legends
-            plt.show(block=False)
+            # plt.show(block=False)
             
-            plt.pause(5)#pause to hold plot open
-            plt.close()
+            # plt.pause(5)#pause to hold plot open
+            # plt.close()
+            os.chdir(ImgFolder)
+            plt.savefig('Tomato_Logging.jpg')
+            Bot.push_image("Tomato_Logging.jpg")
+            Bot.push_message(Buffertext)
+            Bot.push_message(Buffertext)
+
         Case="0"
         
     elif(Case=="5"):#set location for camera sensing position

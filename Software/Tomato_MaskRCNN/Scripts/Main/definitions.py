@@ -8,7 +8,8 @@ import time
 from PIL import Image
 import os
 import keras
-
+from Slack_Bot.Slack_Bot_Def import *
+Bot=Slack_Bot()
 #######################################################################################################
 # Author: Evan Shults
 # Last edit: 03/02/2022
@@ -278,12 +279,12 @@ def ripeness(Img_Name:str,ImgFolder,mask):
     # calculate total non-black pixels from red mask
     numPixelRed = cv2.countNonZero(maskRed)
     print("Red pixels: ", numPixelRed)
-
+   
     # calculate ripeness ratio
     ripenessRatio = numPixelRed/numPixelTomato
 
     print("Ripeness Ratio: ", ripenessRatio)
-    
+
     # assign whether or not tomato is ripe
     if ripenessRatio >= 0.5:
         ripeScore = True # tomato is deemed ripe    
@@ -295,7 +296,7 @@ def ripeness(Img_Name:str,ImgFolder,mask):
     # dispimg=Image.fromarray(img,'RGB')
     # dispimg.show()
 
-    return(ripeScore)
+    return(ripeScore, numPixelTomato,numPixelRed,ripenessRatio)
 
 def GetEdges(Mask):
 
