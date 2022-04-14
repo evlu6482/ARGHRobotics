@@ -332,11 +332,11 @@ def harvest_tomatos(data):
 			# plan = group.go(wait=True)
 			# group.stop()
 			
-			#rospy.loginfo("fuck off")
+			#rospy.loginfo("off")
 
 		else:
 			#height is wrong
-			rospy.loginfo("fuck you")
+			rospy.loginfo("Height Discrepancy")
 		
 
 
