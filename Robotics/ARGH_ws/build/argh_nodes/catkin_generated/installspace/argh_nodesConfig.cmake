@@ -67,14 +67,14 @@ set(argh_nodes_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(argh_nodes_SOURCE_PREFIX /home/argh/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes)
-  set(argh_nodes_DEVEL_PREFIX /home/argh/ARGHRobotics/Robotics/ARGH_ws/devel)
+  set(argh_nodes_SOURCE_PREFIX /home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/src/argh_nodes)
+  set(argh_nodes_DEVEL_PREFIX /home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/devel)
   set(argh_nodes_INSTALL_PREFIX "")
   set(argh_nodes_PREFIX ${argh_nodes_DEVEL_PREFIX})
 else()
   set(argh_nodes_SOURCE_PREFIX "")
   set(argh_nodes_DEVEL_PREFIX "")
-  set(argh_nodes_INSTALL_PREFIX /home/argh/ARGHRobotics/Robotics/ARGH_ws/install)
+  set(argh_nodes_INSTALL_PREFIX /home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/install)
   set(argh_nodes_PREFIX ${argh_nodes_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/argh/ARGHRobotics/Robotics/ARGH_ws/install/lib;/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/install/lib;/home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

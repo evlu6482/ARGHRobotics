@@ -161,6 +161,8 @@ int main(int argc, char **argv){
 	//creating publisher object for starting sensing node
 	ros::Publisher pub = nh.advertise<std_msgs::Bool>("sensing_node_input", 1000);
 
+	//creating publisher to start gripper
+	ros::Publisher pub_grip = nh.advertise<std_msgs::String>("control_gripper", 1000);
 	/**********************************************************/
 	//used for debugging 
 	//creating publisher object to pass boolean value to start move_node
@@ -175,20 +177,33 @@ int main(int argc, char **argv){
 	rate.sleep();
 
 	//prompt to user if they want to begin 
-	std::cout << "\n\nWelcome to ARGHRobotics Harvesting Program";
+	std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	std::cout << " $$$$$$\\  $$$$$$$\\   $$$$$$\\  $$\\   $$\\       $$$$$$$\\            $$\\                  $$\\     $$\\                     ";
+	std::cout << "\n$$  __$$\\ $$  __$$\\ $$  __$$\\ $$ |  $$ |      $$  __$$\\           $$ |                 $$ |    \\__|                    ";
+	std::cout << "\n$$ /  $$ |$$ |  $$ |$$ /  \\__|$$ |  $$ |      $$ |  $$ | $$$$$$\\  $$$$$$$\\   $$$$$$\\ $$$$$$\\   $$\\  $$$$$$$\\  $$$$$$$\\ ";
+	std::cout << "\n$$$$$$$$ |$$$$$$$  |$$ |$$$$\\ $$$$$$$$ |      $$$$$$$  |$$  __$$\\ $$  __$$\\ $$  __$$\\_$$  _|  $$ |$$  _____|$$  _____|";
+	std::cout << "\n$$  __$$ |$$  __$$< $$ |\\_$$ |$$  __$$ |      $$  __$$< $$ /  $$ |$$ |  $$ |$$ /  $$ | $$ |    $$ |$$ /      \\$$$$$$\\ ";
+	std::cout << "\n$$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ |      $$ |  $$ |$$ |  $$ |$$ |  $$ |$$ |  $$ | $$ |$$\\ $$ |$$ |       \\____$$\\ ";
+	std::cout << "\n$$ |  $$ |$$ |  $$ |\\$$$$$$  |$$ |  $$ |      $$ |  $$ |\\$$$$$$  |$$$$$$$  |\\$$$$$$  | \\$$$$  |$$ |\\$$$$$$$\\ $$$$$$$  |";
+	std::cout << "\n\\__|  \\__|\\__|  \\__| \\______/ \\__|  \\__|      \\__|  \\__| \\______/ \\_______/  \\______/   \\____/ \\__| \\_______|\\_______/";
 	std::cout << "\npress enter to begin...";
+	std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 	std::cin.ignore();//take any key enter 
 
 	//publish true message to start sensing node 
 	std_msgs::Bool msg_to_sensor;
 	msg_to_sensor.data = true; //hopefully this begins the sensor node
 	
+	std_msgs::String msg_to_gripper;
+	msg_to_gripper.data = "start";
 	//publish on "sensing_node_input" topic
 	
 	pub.publish(msg_to_sensor);
 	rate.sleep();
+	pub_grip.publish(msg_to_gripper);
 	//%%%%%%%%%%%%% 
 	//pub2.publish(blah);
+	//rate.sleep();
 	//used for debugging move node can delete
 	//%%%%%%%%%%%%%
 

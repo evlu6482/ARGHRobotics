@@ -10,22 +10,27 @@ from geometry_msgs.msg import Pose
 pub_sense = rospy.Publisher('sensing_node_input',Bool,queue_size = 10) # reset node
 pub_move = rospy.Publisher('sensing_node_boolean_move',Bool, queue_size= 10)
 pub_geom = rospy.Publisher('coordinate_tomato',Pose, queue_size = 10)
-Camera_Location = 1
-script_location = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Scripts/Main"
-coord_file = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Mask_Exports/Coordinates.csv"
-camera_file = "/home/argh/Documents/ARGHRobotics/Software/Tomato_MaskRCNN/Camera_Location/Camera_Location.csv"
+
+Camera_Location = np.array([1])
+script_location = "/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Scripts/Main"
+coord_file = "/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Coordinate_Exports/Coordinates.csv"
+camera_file = "/home/argh/Documents/ARGH/ARGHRobotics/Software/Tomato_MaskRCNN/Camera_Location/Camera_Location.csv"
+ros_dir = "/home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws"
 
 def sense_callback(data):
     rate = rospy.Rate(2)
+    global Camera_Location 
     if(data.data==True):
         #RUN SCRIPT
         rospy.loginfo("Beginning Sensing")
         # create csv with camera location
         np.savetxt(camera_file,Camera_Location,delimiter=",")
         # write Camera_Location to text file
-        os.path.join(script_location)
+        os.chdir(script_location)
         os.system("conda run -n maskrcnn python -Wignore ARGH_Driver_V1.py")
+        
         tomato_found = os.path.exists(coord_file)
+        os.chdir(ros_dir)
         if(tomato_found):
             coords = np.loadtxt(coord_file)
             geometry = Pose()
@@ -36,11 +41,13 @@ def sense_callback(data):
             rate.sleep()
         else:
             pub_move.publish(Bool(True))
-            if(Camera_Location==3):
-                Camera_Location=1
+            if(Camera_Location[0]==3):
+                Camera_Location[0]=1
             else:
-                Camera_Location=Camera_Location+1
+                Camera_Location[0]=Camera_Location[0]+1
             rate.sleep()
+            
+
             rospy.loginfo("No tomato found, moving sensor position")
         pub_sense.publish(Bool(False))
         rate.sleep()

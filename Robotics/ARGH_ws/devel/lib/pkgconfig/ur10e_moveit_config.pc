@@ -1,4 +1,4 @@
-prefix=/home/argh/ARGHRobotics/Robotics/ARGH_ws/devel
+prefix=/home/argh/Documents/ARGH/ARGHRobotics/Robotics/ARGH_ws/devel
 
 Name: ur10e_moveit_config
 Description: Description of ur10e_moveit_config

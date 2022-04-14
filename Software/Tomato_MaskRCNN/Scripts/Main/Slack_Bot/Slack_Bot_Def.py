@@ -8,7 +8,11 @@ class Slack_Bot():
 
     def __init__(self):
         #init stuff
-        slack_token="xoxb-2460326662768-3385353117349-JBiI9KzVzabTuoH1tL1cLGST"
+        
+        slack_token = os.environ['SLACK_BOT_TOKEN']
+        
+        print(slack_token)
+        
         self.client = WebClient(token=slack_token)
         self.channelID='bot-commands'
         # self.channelID='general'
